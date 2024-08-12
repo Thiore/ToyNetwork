@@ -74,7 +74,7 @@ public class Gomoku_Logic : MonoBehaviour
         return count;
     }
 
-    // 게임 종료
+    // 게임 종료 (추가 구현 필요)
     private void EndGame(Player player, Chip[] chips)
     {
         Debug.Log($"{player.color} 승리");
@@ -82,7 +82,9 @@ public class Gomoku_Logic : MonoBehaviour
 
     }
 
-    // 착수 이전 착수 가능 여부 반환
+    //==============================================================================================================================================
+    #region 정문님 확인 필요 메서드
+    //true가 반환되어야만 둘 수 있는 자리 false는 이미 돌이 있는 자리
     public bool Check_Can_Add(Player player, int row, int col)
     {
         // 이미 그 자리에 돌이 있는지 확인
@@ -95,6 +97,7 @@ public class Gomoku_Logic : MonoBehaviour
         return true;
     }
 
+    //true가 반환될 경우에는 삼삼임
     public bool Check_SamSam(Chip proposedChip, List<Chip> blackChips)
     {
         int samCount = 0;
@@ -107,6 +110,9 @@ public class Gomoku_Logic : MonoBehaviour
         
         return samCount < 2;
     }
+
+    #endregion
+    //==============================================================================================================================================
 
     private bool Check_ThreeInARow(List<Chip> chips, Chip proposedChip, int dx, int dy)
     {
