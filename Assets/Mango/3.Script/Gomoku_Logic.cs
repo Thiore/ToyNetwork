@@ -9,6 +9,7 @@ public class Gomoku_Logic : MonoBehaviour
     private List<Chip> White_Chip = new List<Chip>();
 
     [SerializeField] private GameObject Chip_Pivot;
+    [SerializeField] public GameObject result_Panel; //이건 조립 
 
     private void Awake()
     {
@@ -83,7 +84,8 @@ public class Gomoku_Logic : MonoBehaviour
     // 게임 종료 (추가 구현 필요)
     private void EndGame(Player player, Chip[] chips)
     {
-        Debug.Log($"{player.color} 승리");
+        Debug.Log($"{player.MyColor} 승리");
+        result_Panel.SetActive(true);
         // 게임 종료 로직 구현
 
     }
