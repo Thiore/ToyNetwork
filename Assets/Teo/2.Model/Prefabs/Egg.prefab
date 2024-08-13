@@ -111,7 +111,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ec315bc288ce2a43a568997c8fd879e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  forceMultiplier: 10
+  forceMultiplier: 40
   circleSegments: 100
   maxRadius: 1
 --- !u!54 &8350904361531693679

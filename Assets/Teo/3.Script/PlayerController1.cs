@@ -7,12 +7,19 @@ public class PlayerController1 : MonoBehaviour
     private Vector3 endPoint;
     private LineRenderer lineRenderer;
     private bool isDragging = false;
-
+    private bool isDie;
     public float forceMultiplier = 10f; // 임펄스의 강도를 조정
     public int circleSegments = 100; // 원을 구성하는 세그먼트 수
     public float maxRadius = 3.0f; // 원의 최대 반지름
     private float currentRadius = 0f; // 원의 현재 반지름
 
+    private PutOn player;
+
+    private void OnEnable()
+    {
+        isDie = false;
+        transform.parent.TryGetComponent(out player);
+    }
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -105,4 +112,20 @@ public class PlayerController1 : MonoBehaviour
             angle += angleStep;
         }
     }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.CompareTag("Floor")&&!isDie)
+        {
+            isDie = true;
+            Invoke("InvokeDie", 1f);
+        }
+    }
+
+    private void InvokeDie()
+    {
+        
+        player.Die(gameObject);
+    }
+    
+
 }
