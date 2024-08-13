@@ -15,14 +15,8 @@ public class Chip : MonoBehaviour
     [SerializeField] private Mesh mesh;
     public Mesh ChipMesh { get => mesh; }
 
-    public int row { get; private set; }
-    public int col { get; private set; }
-
-    public Chip(int r, int c)
-    {
-        row = r;
-        col = c;
-    }
+    public int row { get => row; set => row = value; }
+    public int col { get => col; set => col = value; }
 
     private void Awake()
     {

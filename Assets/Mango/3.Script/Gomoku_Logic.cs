@@ -8,7 +8,26 @@ public class Gomoku_Logic : MonoBehaviour
     private List<Chip> Black_Chip = new List<Chip>();
     private List<Chip> White_Chip = new List<Chip>();
 
-   
+    [SerializeField] private GameObject Chip_Pivot;
+
+    private void Awake()
+    {
+        Chip_Pivot = GameObject.Find("Chip_Pivot");
+        int index = 0;
+        for (int i = 0; i < 19; i++)
+        {
+            for (int j = 0; j < 19; j++)
+            {
+                if (Chip_Pivot.transform.GetChild(index).TryGetComponent(out Chip chip))
+                {
+                    chip.row = j;
+                    chip.col = i;
+                    index++;
+                }
+            }
+        }
+    }
+
 
     // 착수 이후 결과값 검출
     private void Check_Chip(Player player, Chip lastChip)
@@ -41,6 +60,7 @@ public class Gomoku_Logic : MonoBehaviour
         // 역방향 체크
         count += CountChipsInDirection(chips, lastChip, -dx, -dy);
 
+        Debug.Log(count);
         return count >= 5;
     }
 
@@ -101,17 +121,17 @@ public class Gomoku_Logic : MonoBehaviour
         return true;
     }
 
-    //true가 반환될 경우에는 삼삼임
-    public bool Check_SamSam(Chip proposedChip, List<Chip> blackChips)
+    //false 반환될 경우에는 삼삼임
+    public bool Check_SamSam(Chip proposedChip)
     {
         int samCount = 0;
 
         // 네 방향 확인
-        if (Check_ThreeInARow(blackChips, proposedChip, 1, 0)) samCount++;  // 가로
-        if (Check_ThreeInARow(blackChips, proposedChip, 0, 1)) samCount++;  // 세로
-        if (Check_ThreeInARow(blackChips, proposedChip, 1, 1)) samCount++;  // 우하향 대각선
-        if (Check_ThreeInARow(blackChips, proposedChip, 1, -1)) samCount++; // 우상향 대각선
-        
+        if (Check_ThreeInARow(Black_Chip, proposedChip, 1, 0)) samCount++;  // 가로
+        if (Check_ThreeInARow(Black_Chip, proposedChip, 0, 1)) samCount++;  // 세로
+        if (Check_ThreeInARow(Black_Chip, proposedChip, 1, 1)) samCount++;  // 우하향 대각선
+        if (Check_ThreeInARow(Black_Chip, proposedChip, 1, -1)) samCount++; // 우상향 대각선
+
         return samCount < 2;
     }
 

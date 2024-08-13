@@ -31,7 +31,6 @@ public class Go_InputControl : MonoBehaviour
         mesh = Resources.Load("Gogame_chip") as Mesh;
         chip_pivotParent = GameObject.Find("Chip_Pivot");
         chipPivots = new Transform[chip_pivotParent.transform.childCount];
-        Debug.Log(chip_pivotParent.transform.childCount);
     }
 
     private void Update()
