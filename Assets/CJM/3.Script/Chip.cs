@@ -9,6 +9,7 @@ public class Chip : MonoBehaviour
     private bool isPut = false;
     public bool IsPut { get => isPut; set => isPut = value; }
     [SerializeField] private Player player;
+    [SerializeField] private Gomoku_Logic logic;
 
     //0 Èæ 1 ¹é 
     [SerializeField] private Material[] checkchip_material;
@@ -24,11 +25,12 @@ public class Chip : MonoBehaviour
     {
         mesh = Resources.Load("Gogame_chip") as Mesh;
         player = GameObject.FindObjectOfType<Player>();
+        logic = GameObject.FindObjectOfType<Gomoku_Logic>();
     }
 
     private void OnMouseOver()
     {
-        if (!isPut)
+        if (!isPut && logic.result_Panel.activeSelf.Equals(false))
         {
             transform.GetComponent<MeshFilter>().mesh = mesh;
             MeshRenderer mate = transform.GetComponent<MeshRenderer>();
@@ -38,7 +40,7 @@ public class Chip : MonoBehaviour
 
     private void OnMouseExit()
     {
-        if (!isPut)
+        if (!isPut && logic.result_Panel.activeSelf.Equals(false))
         {
             gameObject.GetComponent<MeshFilter>().mesh = null;
         }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
@@ -20,6 +21,11 @@ public class Player : MonoBehaviour
 
     [SerializeField] Gomoku_Logic logic;
 
+    private Action action;
+
+    private float currentTime = 0f;
+    private float limitTime = 10f;
+
     private void Awake()
     {
         logic = GameObject.FindObjectOfType<Gomoku_Logic>();
@@ -27,7 +33,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetMouseButtonUp(0) && logic.result_Panel.activeSelf.Equals(false))
         {
             PutChip();
         }
@@ -66,7 +72,7 @@ public class Player : MonoBehaviour
     }
 
 
-    private void TurnChange()
+    public void TurnChange()
     {
         if (myColor.Equals(0))
         {
@@ -77,5 +83,30 @@ public class Player : MonoBehaviour
             myColor = 0;
         }
     }
+
+
+    public void GoGame()
+    {
+        StartCoroutine(GoGame_co());
+    }
+
+    private IEnumerator GoGame_co()
+    {
+        currentTime = limitTime;
+        while (currentTime >= 0f)
+        {
+            currentTime -= Time.deltaTime;
+            Debug.Log(currentTime);
+            if (currentTime <= 0f)
+            {
+                currentTime = limitTime;
+                TurnChange();
+                yield return new WaitForSecondsRealtime(limitTime);
+            }
+        }
+        Debug.Log("ÅÏÃ¾");
+        GoGame();
+    }
+
 
 }
