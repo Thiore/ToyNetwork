@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Gomoku_Logic : MonoBehaviour
 {
+    // 이미 둔것들 
     private List<Chip> Black_Chip = new List<Chip>();
     private List<Chip> White_Chip = new List<Chip>();
 
@@ -12,7 +13,7 @@ public class Gomoku_Logic : MonoBehaviour
     // 착수 이후 결과값 검출
     private void Check_Chip(Player player, Chip lastChip)
     {
-        List<Chip> playerChips = player.color == Player.Color.Black ? Black_Chip : White_Chip;
+        List<Chip> playerChips = player.MyColor.Equals(0) ? Black_Chip : White_Chip;
 
         // 바둑알이 5개가 안되는 경우
         if (playerChips.Count < 5)

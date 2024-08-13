@@ -42,18 +42,6 @@ public class Go_InputControl : MonoBehaviour
         }
     }
 
-    private void OnMouseOver()
-    {
-        gameObject.GetComponent<MeshFilter>().mesh = mesh;
-        MeshRenderer mate = gameObject.GetComponent<MeshRenderer>();
-        mate.material = myColor.Equals(0) ? checkchip_material[0] : checkchip_material[1];
-    }
-
-    private void OnMouseExit()
-    {
-        gameObject.GetComponent<MeshFilter>().mesh = null;
-    }
-
     private void PutChip()
     {
         //내가 0이거나 0이 아니거나로 두면 될듯 
