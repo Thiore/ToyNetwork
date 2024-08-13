@@ -18,10 +18,6 @@ public class GoGameManager : MonoBehaviour
         player = GameObject.FindObjectOfType<Player>();
     }
 
-    private void Start()
-    {
-     
-    }
 
     public void GoGame()
     {

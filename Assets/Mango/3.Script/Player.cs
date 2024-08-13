@@ -33,6 +33,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        //GoGame();
         if (Input.GetMouseButtonUp(0) && logic.result_Panel.activeSelf.Equals(false))
         {
             PutChip();
@@ -87,7 +88,17 @@ public class Player : MonoBehaviour
 
     public void GoGame()
     {
-        StartCoroutine(GoGame_co());
+        while (currentTime >= 0f)
+        {
+            currentTime -= Time.deltaTime;
+            Debug.Log(currentTime);
+            if (currentTime <= 0f)
+            {
+                currentTime = limitTime;
+                TurnChange();
+            }
+        }
+        //StartCoroutine(GoGame_co());
     }
 
     private IEnumerator GoGame_co()
