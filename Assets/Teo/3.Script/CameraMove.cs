@@ -4,19 +4,15 @@ using UnityEngine;
 
 public class CameraMove : MonoBehaviour
 {
-    private Camera cam;
     [SerializeField] private float camSpeed;
     [SerializeField] private Transform Center;
-    private float scrollDis;
 
     private void Awake()
     {
-        TryGetComponent(out cam);
         if(camSpeed.Equals(0))
         {
             camSpeed = 10f;
         }
-        scrollDis = 0;
     }
 
     private void Update()
