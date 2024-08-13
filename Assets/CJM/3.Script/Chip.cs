@@ -13,6 +13,7 @@ public class Chip : MonoBehaviour
     //0 Èæ 1 ¹é 
     [SerializeField] private Material[] checkchip_material;
     [SerializeField] private Mesh mesh;
+    public Mesh ChipMesh { get => mesh; }
 
     public int row { get; private set; }
     public int col { get; private set; }
