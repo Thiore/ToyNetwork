@@ -48,4 +48,9 @@ public class PutOn : MonoBehaviour
         }
     }
 
+    public void Die()
+    { 
+    
+    }
+
 }

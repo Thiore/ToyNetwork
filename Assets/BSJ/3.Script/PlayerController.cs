@@ -9,8 +9,8 @@ public class PlayerController : MonoBehaviour
     private bool isDragging = false;
 
     public float forceMultiplier = 10f; // 임펄스의 강도를 조정
-    public int circleSegments = 100; // 원을 구성하는 세그먼트 수
-    public float maxRadius = 3.0f; // 원의 최대 반지름
+    public int circleSegments = 200; // 원을 구성하는 세그먼트 수
+    public float maxRadius = 50f; // 원의 최대 반지름
     private float currentRadius = 0f; // 원의 현재 반지름
 
     void Start()
@@ -34,6 +34,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             rb.angularVelocity = Vector3.zero;
+            transform.rotation = Quaternion.identity;
             
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit) && hit.collider.gameObject == gameObject)
