@@ -6,26 +6,43 @@ public class PutOn : MonoBehaviour
 {
     [SerializeField] private Transform LB;
     [SerializeField] private Transform RT;
-    private float setTime = 3f;
+    private float setTime = 100f;
     private float startTime;
     [SerializeField] private GameObject Chip_Prefabs;
     private int SetCount = 5;
     private Queue<GameObject> Chip_Queue = new Queue<GameObject>();
-    public bool isGameStart { get; private set; }
+    public bool isGameStart { get; set; }
+   
+    private Select_color select_Color;
 
+    
+    
     private void Start()
     {
-        startTime = 0f;
-        for(int i = 0; i < SetCount;i++)
+
+        select_Color = GetComponent<Select_color>();
+        
+        for (int i = 0; i < SetCount; i++)
         {
-            GameObject obj = Instantiate(Chip_Prefabs,transform);
+            GameObject obj = Instantiate(select_Color.chipPrefab, transform);
             obj.SetActive(false);
             Chip_Queue.Enqueue(obj);
         }
+
+        startTime = 0f;
+        //for(int i = 0; i < SetCount;i++)
+        //{
+        //    GameObject obj = Instantiate(Chip_Prefabs,transform);
+        //    obj.SetActive(false);
+        //    Chip_Queue.Enqueue(obj);
+        //}
     }
 
     private void Update()
     {
+        if (!isGameStart)
+            return;
+
         if(startTime<setTime)
         {
             startTime += Time.deltaTime;
