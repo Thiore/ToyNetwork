@@ -82,6 +82,8 @@ public class PlayerController1 : MonoBehaviour
         }
     }
 
+    
+
     // 원 그리기
     void DrawCircle(float radius, Vector3 dir)
     {
