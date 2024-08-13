@@ -13,6 +13,15 @@ public class Chip : MonoBehaviour
     [SerializeField] private Material[] checkchip_material;
     [SerializeField] private Mesh mesh;
 
+    public int row { get; private set; }
+    public int col { get; private set; }
+
+    public Chip(int r, int c)
+    {
+        row = r;
+        col = c;
+    }
+
     private void Awake()
     {
         mesh = Resources.Load("Gogame_chip") as Mesh;
