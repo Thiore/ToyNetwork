@@ -20,14 +20,13 @@ public class Gomoku_Logic : MonoBehaviour
             {
                 if (Chip_Pivot.transform.GetChild(index).TryGetComponent(out Chip chip))
                 {
-                    chip.row = j;
-                    chip.col = i;
+                    chip.Row = j;
+                    chip.Col = i;
                     index++;
                 }
             }
         }
     }
-
 
     // 착수 이후 결과값 검출
     private void Check_Chip(Player player, Chip lastChip)
@@ -68,10 +67,10 @@ public class Gomoku_Logic : MonoBehaviour
     private int CountChipsInDirection(List<Chip> chips, Chip lastChip, int dx, int dy)
     {
         int count = 0;
-        int nextRow = lastChip.row + dx;
-        int nextCol = lastChip.col + dy;
+        int nextRow = lastChip.Row + dx;
+        int nextCol = lastChip.Col + dy;
 
-        while (chips.Exists(chip => chip.row == nextRow && chip.col == nextCol))
+        while (chips.Exists(chip => chip.Row == nextRow && chip.Col == nextCol))
         {
             count++;
             nextRow += dx;
@@ -95,11 +94,11 @@ public class Gomoku_Logic : MonoBehaviour
     // 착수 시, 호출해야 하는 메서드
     public void AddChip(Chip chip, Player player)
     {
-        if (player.color == Player.Color.Black)
+        if (player.MyColor.Equals(0))
         {
             Black_Chip.Add(chip);
         }
-        else
+        else if(player.MyColor.Equals(1)) 
         {
             White_Chip.Add(chip);
         }
@@ -112,8 +111,8 @@ public class Gomoku_Logic : MonoBehaviour
     public bool Check_Can_Add(Player player, int row, int col)
     {
         // 이미 그 자리에 돌이 있는지 확인
-        if (Black_Chip.Exists(chip => chip.row == row && chip.col == col) ||
-            White_Chip.Exists(chip => chip.row == row && chip.col == col))
+        if (Black_Chip.Exists(chip => chip.Row == row && chip.Col == col) ||
+            White_Chip.Exists(chip => chip.Row == row && chip.Col == col))
         {
             return false;
         }
