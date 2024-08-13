@@ -4,15 +4,34 @@ using UnityEngine;
 
 public class Gomoku_Logic : MonoBehaviour
 {
+    // 이미 둔것들 
     private List<Chip> Black_Chip = new List<Chip>();
     private List<Chip> White_Chip = new List<Chip>();
 
-   
+    [SerializeField] private GameObject Chip_Pivot;
+
+    private void Awake()
+    {
+        Chip_Pivot = GameObject.Find("Chip_Pivot");
+        int index = 0;
+        for (int i = 0; i < 19; i++)
+        {
+            for (int j = 0; j < 19; j++)
+            {
+                if (Chip_Pivot.transform.GetChild(index).TryGetComponent(out Chip chip))
+                {
+                    chip.Row = j;
+                    chip.Col = i;
+                    index++;
+                }
+            }
+        }
+    }
 
     // 착수 이후 결과값 검출
     private void Check_Chip(Player player, Chip lastChip)
     {
-        List<Chip> playerChips = player.color == Player.Color.Black ? Black_Chip : White_Chip;
+        List<Chip> playerChips = player.MyColor.Equals(0) ? Black_Chip : White_Chip;
 
         // 바둑알이 5개가 안되는 경우
         if (playerChips.Count < 5)
@@ -40,6 +59,7 @@ public class Gomoku_Logic : MonoBehaviour
         // 역방향 체크
         count += CountChipsInDirection(chips, lastChip, -dx, -dy);
 
+        Debug.Log(count);
         return count >= 5;
     }
 
@@ -47,10 +67,10 @@ public class Gomoku_Logic : MonoBehaviour
     private int CountChipsInDirection(List<Chip> chips, Chip lastChip, int dx, int dy)
     {
         int count = 0;
-        int nextRow = lastChip.row + dx;
-        int nextCol = lastChip.col + dy;
+        int nextRow = lastChip.Row + dx;
+        int nextCol = lastChip.Col + dy;
 
-        while (chips.Exists(chip => chip.row == nextRow && chip.col == nextCol))
+        while (chips.Exists(chip => chip.Row == nextRow && chip.Col == nextCol))
         {
             count++;
             nextRow += dx;
@@ -74,11 +94,11 @@ public class Gomoku_Logic : MonoBehaviour
     // 착수 시, 호출해야 하는 메서드
     public void AddChip(Chip chip, Player player)
     {
-        if (player.color == Player.Color.Black)
+        if (player.MyColor.Equals(0))
         {
             Black_Chip.Add(chip);
         }
-        else
+        else if(player.MyColor.Equals(1)) 
         {
             White_Chip.Add(chip);
         }
@@ -91,8 +111,8 @@ public class Gomoku_Logic : MonoBehaviour
     public bool Check_Can_Add(Player player, int row, int col)
     {
         // 이미 그 자리에 돌이 있는지 확인
-        if (Black_Chip.Exists(chip => chip.row == row && chip.col == col) ||
-            White_Chip.Exists(chip => chip.row == row && chip.col == col))
+        if (Black_Chip.Exists(chip => chip.Row == row && chip.Col == col) ||
+            White_Chip.Exists(chip => chip.Row == row && chip.Col == col))
         {
             return false;
         }
@@ -100,17 +120,17 @@ public class Gomoku_Logic : MonoBehaviour
         return true;
     }
 
-    //true가 반환될 경우에는 삼삼임
-    public bool Check_SamSam(Chip proposedChip, List<Chip> blackChips)
+    //false 반환될 경우에는 삼삼임
+    public bool Check_SamSam(Chip proposedChip)
     {
         int samCount = 0;
 
         // 네 방향 확인
-        if (Check_ThreeInARow(blackChips, proposedChip, 1, 0)) samCount++;  // 가로
-        if (Check_ThreeInARow(blackChips, proposedChip, 0, 1)) samCount++;  // 세로
-        if (Check_ThreeInARow(blackChips, proposedChip, 1, 1)) samCount++;  // 우하향 대각선
-        if (Check_ThreeInARow(blackChips, proposedChip, 1, -1)) samCount++; // 우상향 대각선
-        
+        if (Check_ThreeInARow(Black_Chip, proposedChip, 1, 0)) samCount++;  // 가로
+        if (Check_ThreeInARow(Black_Chip, proposedChip, 0, 1)) samCount++;  // 세로
+        if (Check_ThreeInARow(Black_Chip, proposedChip, 1, 1)) samCount++;  // 우하향 대각선
+        if (Check_ThreeInARow(Black_Chip, proposedChip, 1, -1)) samCount++; // 우상향 대각선
+
         return samCount < 2;
     }
 
