@@ -6,18 +6,19 @@ public class PutOn : MonoBehaviour
 {
     [SerializeField] private Transform LB;
     [SerializeField] private Transform RT;
-    private float setTime = 15f;
+    private float setTime = 3f;
     private float startTime;
     [SerializeField] private GameObject Chip_Prefabs;
     private int SetCount = 5;
     private Queue<GameObject> Chip_Queue = new Queue<GameObject>();
+    public bool isGameStart { get; private set; }
 
     private void Start()
     {
         startTime = 0f;
         for(int i = 0; i < SetCount;i++)
         {
-            GameObject obj = Instantiate(Chip_Prefabs);
+            GameObject obj = Instantiate(Chip_Prefabs,transform);
             obj.SetActive(false);
             Chip_Queue.Enqueue(obj);
         }
@@ -46,11 +47,19 @@ public class PutOn : MonoBehaviour
             }
             
         }
+        
     }
 
-    public void Die()
-    { 
-    
+    public void Die(GameObject obj)
+    {
+        obj.SetActive(false);
+        Chip_Queue.Enqueue(obj);
+        Debug.Log(Chip_Queue.Count);
+        if(Chip_Queue.Count.Equals(SetCount))
+        {
+            Debug.Log("Lose");
+        }
     }
+
 
 }
