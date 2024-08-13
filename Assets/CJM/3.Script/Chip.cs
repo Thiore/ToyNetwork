@@ -7,6 +7,7 @@ public class Chip : MonoBehaviour
     //Chip 자체는 동작하지 않고 반투명한 돌만 나오게끔 할 예정 
 
     private bool isPut = false;
+    public bool IsPut { get => isPut; set => isPut = value; }
     [SerializeField] private Player player;
 
     //0 흑 1 백 
