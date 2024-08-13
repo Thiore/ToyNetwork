@@ -11,4 +11,11 @@ public class Player : MonoBehaviour
         White
     }
 
+    private int myColor = 1;
+    public int MyColor { get { return myColor; } }
+    //0Èæ 1¹é
+    [SerializeField] private Material[] chip_material;
+
+
+
 }

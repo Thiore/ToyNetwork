@@ -21,73 +21,73 @@ public class Go_InputControl : MonoBehaviour
 
     [SerializeField] private Mesh mesh;
 
+    private GameObject currentPosChip;
+    private Queue<GameObject> currentPosChips;
+
+
+
     private void Awake()
     {
         mesh = Resources.Load("Gogame_chip") as Mesh;
         chip_pivotParent = GameObject.Find("Chip_Pivot");
         chipPivots = new Transform[chip_pivotParent.transform.childCount];
         Debug.Log(chip_pivotParent.transform.childCount);
-
     }
 
     private void Update()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonUp(0))
         {
-            CheckPutChip(ray);
+            PutChip();
         }
-        PutChip(ray);
     }
 
-    private void ChipControl()
+    private void OnMouseOver()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Input.GetMouseButtonDown(0))
-        {
-            CheckPutChip(ray);
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            PutChip(ray);
-        }
-
+        gameObject.GetComponent<MeshFilter>().mesh = mesh;
+        MeshRenderer mate = gameObject.GetComponent<MeshRenderer>();
+        mate.material = myColor.Equals(0) ? checkchip_material[0] : checkchip_material[1];
     }
 
-    private void PutChip(Ray ray)
+    private void OnMouseExit()
+    {
+        gameObject.GetComponent<MeshFilter>().mesh = null;
+    }
+
+    private void PutChip()
     {
         //내가 0이거나 0이 아니거나로 두면 될듯 
 
-            //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            if (hit.collider != null)
             {
-                if (hit.collider != null)
-                {
-                    hit.collider.gameObject.GetComponent<MeshFilter>().mesh = mesh;
-                    MeshRenderer mate = hit.collider.gameObject.GetComponent<MeshRenderer>();
-                    mate.material = myColor.Equals(0) ? chip_material[0] : chip_material[1];
-                }
+                hit.collider.gameObject.GetComponent<MeshFilter>().mesh = mesh;
+                MeshRenderer mate = hit.collider.gameObject.GetComponent<MeshRenderer>();
+                mate.material = myColor.Equals(0) ? chip_material[0] : chip_material[1];
             }
-       
+        }
+
     }
 
-    private void CheckPutChip(Ray ray)
+    private void CheckPutChip()
     {
-        
-            //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
-            {
-                if (hit.collider != null)
-                {
-                    hit.collider.gameObject.GetComponent<MeshFilter>().mesh = mesh;
-                    MeshRenderer mate = hit.collider.gameObject.GetComponent<MeshRenderer>();
-                    mate.material = myColor.Equals(0) ? checkchip_material[0] : checkchip_material[1];
 
-                }
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            if (hit.collider != null)
+            {
+                currentPosChip = hit.collider.gameObject;
+                currentPosChip.GetComponent<MeshFilter>().mesh = mesh;
+                MeshRenderer mate = currentPosChip.GetComponent<MeshRenderer>();
+                mate.material = myColor.Equals(0) ? checkchip_material[0] : checkchip_material[1];
             }
-        
+        }
+
 
     }
 
