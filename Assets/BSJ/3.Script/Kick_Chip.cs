@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class Kick_Chip : MonoBehaviour
 {
     private Rigidbody rb;
     private Vector3 startPoint;
