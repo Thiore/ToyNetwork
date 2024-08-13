@@ -7,21 +7,7 @@ public class Gomoku_Logic : MonoBehaviour
     private List<Chip> Black_Chip = new List<Chip>();
     private List<Chip> White_Chip = new List<Chip>();
 
-    // 착수
-    private void AddChip(Chip chip, Player player)
-    {
-        if (player.color == Player.Color.Black)
-        {
-            Black_Chip.Add(chip);
-        }
-        else
-        {
-            White_Chip.Add(chip);
-        }
-
-        // 돌을 추가한 후 즉시 오목 여부를 체크합니다.
-        Check_Chip(player, chip);
-    }
+   
 
     // 착수 이후 결과값 검출
     private void Check_Chip(Player player, Chip lastChip)
@@ -84,6 +70,23 @@ public class Gomoku_Logic : MonoBehaviour
 
     //==============================================================================================================================================
     #region 정문님 확인 필요 메서드
+
+    // 착수 시, 호출해야 하는 메서드
+    public void AddChip(Chip chip, Player player)
+    {
+        if (player.color == Player.Color.Black)
+        {
+            Black_Chip.Add(chip);
+        }
+        else
+        {
+            White_Chip.Add(chip);
+        }
+
+        // 돌을 추가한 후 즉시 오목 여부를 체크합니다.
+        Check_Chip(player, chip);
+    }
+
     //true가 반환되어야만 둘 수 있는 자리 false는 이미 돌이 있는 자리
     public bool Check_Can_Add(Player player, int row, int col)
     {
@@ -127,15 +130,5 @@ public class Gomoku_Logic : MonoBehaviour
         return count == 3;
     }
 
-    public class Chip
-    {
-        public int row { get; private set; }
-        public int col { get; private set; }
 
-        public Chip(int r, int c)
-        {
-            row = r;
-            col = c;
-        }
-    }
 }
