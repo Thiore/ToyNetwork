@@ -28,11 +28,13 @@ public class PlayerController : MonoBehaviour
         lineRenderer.useWorldSpace = false; // 로컬 좌표를 사용
         lineRenderer.enabled = false; // 드래그할 때만 보이게 설정
     }
-
+ 
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
+            rb.angularVelocity = Vector3.zero;
+            
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit) && hit.collider.gameObject == gameObject)
             {
@@ -88,9 +90,9 @@ public class PlayerController : MonoBehaviour
         //수정
         float angle;
         if (dir.z > 0)
-            angle = -Vector3.Angle(Vector3.left, dir);
+            angle = -Vector3.Angle(-transform.right, dir);
         else
-            angle = Vector3.Angle(Vector3.left, dir);
+            angle = Vector3.Angle(-transform.right, dir);
         //Debug.Log(angle);
         float angleStep = 360f / circleSegments;
 
