@@ -34,7 +34,7 @@ public class Chip : MonoBehaviour
         {
             transform.GetComponent<MeshFilter>().mesh = mesh;
             MeshRenderer mate = transform.GetComponent<MeshRenderer>();
-            mate.material = player.MyColor.Equals(0) ? checkchip_material[0] : checkchip_material[1];
+            mate.material = player.Myturn ? checkchip_material[0] : checkchip_material[1];
         }
     }
 

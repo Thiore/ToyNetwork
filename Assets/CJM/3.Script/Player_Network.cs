@@ -1,10 +1,11 @@
+using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player_Network : NetworkBehaviour
 {
     public Color color;
     public enum Color
@@ -27,6 +28,19 @@ public class Player : MonoBehaviour
     private float currentTime = 0f;
     private float limitTime = 10f;
 
+    private static event Action<Player_Network> onChip;
+
+    public override void OnStartAuthority()
+    {
+        if(isLocalPlayer)
+        {
+
+        }
+
+ 
+    }
+
+
     private void Awake()
     {
         logic = GameObject.FindObjectOfType<Gomoku_Logic>();
@@ -39,9 +53,6 @@ public class Player : MonoBehaviour
         {
             PutChip();
         }
-
-    
-       
     }
 
 
@@ -57,7 +68,7 @@ public class Player : MonoBehaviour
                 {
                     if (!chip.IsPut)
                     {
-                        if(myColor.Equals(0))
+                        if (myColor.Equals(0))
                         {
                             if (!logic.Check_SamSam(chip))
                             {
@@ -69,7 +80,7 @@ public class Player : MonoBehaviour
                         hit.collider.gameObject.GetComponent<MeshFilter>().mesh = chip.ChipMesh;
                         MeshRenderer mate = chip.GetComponent<MeshRenderer>();
                         mate.material = myTurn ? chip_material[0] : chip_material[1];
-                        logic.AddChip(chip, this);
+                       // logic.AddChip(chip, this);
                         TurnChange();
                     }
                 }
@@ -117,5 +128,27 @@ public class Player : MonoBehaviour
         GoGame();
     }
 
+
+
+
+    [ClientCallback]
+    private void OnDestroy()
+    {
+        if (!isLocalPlayer) return;
+    }
+
+
+    [Command]
+    private void CmdPut()
+    {
+
+    }
+
+
+    [ClientRpc]
+    private void PlayerPutonChip()
+    {
+        PutChip();
+    }
 
 }

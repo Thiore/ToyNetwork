@@ -6,15 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/PackagesBundle/Mirror/Examples/AdditiveLevels/Scenes/MirrorAdditiveLevelsOffline.unity
-    guid: 9959d9d8e637be64dab77006a85135c1
-  - enabled: 1
-    path: Assets/PackagesBundle/Mirror/Examples/AdditiveLevels/Scenes/MirrorAdditiveLevelsOnline.unity
-    guid: 3c63960543989ea41ba3d3fb04d6dcf3
-  - enabled: 1
-    path: Assets/PackagesBundle/Mirror/Examples/AdditiveLevels/Scenes/MirrorAdditiveLevelsSubLevel1.unity
-    guid: 91c0fa5f4542be14dbad5c838292056b
-  - enabled: 1
-    path: Assets/PackagesBundle/Mirror/Examples/AdditiveLevels/Scenes/MirrorAdditiveLevelsSubLevel2.unity
-    guid: e8e2dc8c3ef824b468c6f6e1980a4b27
+    path: Assets/CJM/1.Scene/CJMScene_Server.unity
+    guid: b1a5926feaff52e4bb82f83f6dad57a0
   m_configObjects: {}
