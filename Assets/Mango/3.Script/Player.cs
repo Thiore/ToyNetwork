@@ -38,10 +38,7 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonUp(0) && logic.result_Panel.activeSelf.Equals(false))
         {
             PutChip();
-        }
-
-    
-       
+        }       
     }
 
 
