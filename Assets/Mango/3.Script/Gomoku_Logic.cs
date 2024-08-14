@@ -32,7 +32,7 @@ public class Gomoku_Logic : MonoBehaviour
     // 착수 이후 결과값 검출
     private void Check_Chip(Player player, Chip lastChip)
     {
-        List<Chip> playerChips = player.MyColor.Equals(0) ? Black_Chip : White_Chip;
+        List<Chip> playerChips = player.Myturn ? Black_Chip : White_Chip;
 
         // 바둑알이 5개가 안되는 경우
         if (playerChips.Count < 5)
@@ -84,7 +84,8 @@ public class Gomoku_Logic : MonoBehaviour
     // 게임 종료 (추가 구현 필요)
     private void EndGame(Player player, Chip[] chips)
     {
-        Debug.Log($"{player.MyColor} 승리");
+        string winner = player.Myturn ? "흑색" : "백색";
+        Debug.Log($"{winner} 승리");
         result_Panel.SetActive(true);
         // 게임 종료 로직 구현
 
@@ -96,11 +97,11 @@ public class Gomoku_Logic : MonoBehaviour
     // 착수 시, 호출해야 하는 메서드
     public void AddChip(Chip chip, Player player)
     {
-        if (player.MyColor.Equals(0))
+        if (player.Myturn)
         {
             Black_Chip.Add(chip);
         }
-        else if(player.MyColor.Equals(1)) 
+        else if (!player.Myturn)
         {
             White_Chip.Add(chip);
         }

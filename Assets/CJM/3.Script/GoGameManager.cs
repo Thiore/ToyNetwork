@@ -36,8 +36,6 @@ public class GoGameManager : MonoBehaviour
                 yield return new WaitForSecondsRealtime(limitTime);
             }
         }
-        Debug.Log("≈œ√æ");
-        StartCoroutine(GoGame_co());
     }
 
 
