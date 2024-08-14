@@ -63,10 +63,28 @@ public class AccountControl : MonoBehaviour
 
     public void Duplicate_Check()
     {
-        if (!SQL_Manager.instance.Duplicate_Check(ID_Input.text))
+        if (SQL_Manager.instance.Duplicate_Check(ID_Input.text).Equals(1))
         {
+
             Log_2.text = ($"중복되는 아이디입니다.\n다른 아이디를 입력해주세요.");
             return;
+        }
+        switch(SQL_Manager.instance.Duplicate_Check(ID_Input.text))
+        {
+            case 1:
+                Log_2.text = "연결에 실패했습니다.";
+                break;
+            case 2:
+                Log_2.text = "ID는 15글자보다 많을 수 없습니다.";
+                break;
+            case 3:
+                Log_2.text = ($"중복되는 아이디입니다.\n다른 아이디를 입력해주세요.");
+                break;
+            case 4:
+                Log_2.text = "TryCatch오류";
+                break;
+            default:
+                break;
         }
 
         this.gameObject.SetActive(false);

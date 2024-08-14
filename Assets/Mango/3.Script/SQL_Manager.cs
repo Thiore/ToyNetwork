@@ -62,7 +62,7 @@ public class SQL_Manager : MonoBehaviour
     public MySqlConnection connection; // DB 연결을 위한 객체
     public MySqlDataReader reader; // SQL 쿼리 결과를 읽어오는 객체
 
-    [SerializeField] private string DB_Path = string.Empty; // DB 설정 파일 경로
+    private string DB_Path = string.Empty; // DB 설정 파일 경로
 
     public static SQL_Manager instance = null; // 싱글톤 패턴을 위한 인스턴스
 
@@ -80,7 +80,7 @@ public class SQL_Manager : MonoBehaviour
             return;
         }
 
-        DB_Path = Application.dataPath + "/Database"; // DB 설정 파일의 경로를 지정
+        DB_Path = Path.Combine(Application.streamingAssetsPath, "Database/config.json"); // DB 설정 파일의 경로를 지정
         string serverinfo = Server_set(DB_Path); // 서버 정보 로드
 
         try
@@ -104,26 +104,21 @@ public class SQL_Manager : MonoBehaviour
     // 파일 경로를 입력받아 Json 파일에서 서버 접속 정보를 읽어옴
     private string Server_set(string path)
     {
-        // 경로에 파일이 없으면 경로와 파일을 생성함
-        if (!File.Exists(path))
+        if (File.Exists(path))
         {
-            Directory.CreateDirectory(path);
+            string JsonString = File.ReadAllText(path);
+            JsonData itemData = JsonMapper.ToObject(JsonString);
+            string serverInfo = $"Server = {itemData[0]["IP"]};" +
+                                $"Database = {itemData[0]["TableName"]};" +
+                                $"Uid = {itemData[0]["ID"]};" +
+                                $"Pwd = {itemData[0]["PW"]};" +
+                                $"Port = {itemData[0]["PORT"]};" +
+                                "CharSet = utf8";
+            return serverInfo;
         }
 
-        // 설정 파일(config.json)을 읽어와 Json 데이터를 파싱
-        string JsonString = File.ReadAllText(path + "/config.json");
-        JsonData itemdata = JsonMapper.ToObject(JsonString);
 
-        // 서버 접속 정보를 반환
-        string serverInfo =
-            $"Server={itemdata[0]["IP"]};" +
-            $"Database={itemdata[0]["TableName"]}; " +
-            $"Uid={itemdata[0]["ID"]}; " +
-            $"Pwd={itemdata[0]["PW"]}; " +
-            $"Port={itemdata[0]["PORT"]}; " +
-            "CharSet=utf8;";
-
-        return serverInfo;
+        return string.Empty;
     }
 
     // DB 연결 상태를 확인하고, 연결이 닫혀있다면 재연결 시도
@@ -202,13 +197,17 @@ public class SQL_Manager : MonoBehaviour
 
     // ID 중복 확인 메서드
     // 회원가입 시 ID가 이미 존재하는지 확인하기 위해 사용
-    public bool Duplicate_Check(string id)
+    public int Duplicate_Check(string id)
     {
         try
         {
             if (!connection_check(connection))
             {
-                return false;
+                return 1;
+            }
+            if(id.Length>15)
+            {
+                return 2;
             }
 
             // SQL 쿼리로 ID가 존재하는지 확인
@@ -221,16 +220,16 @@ public class SQL_Manager : MonoBehaviour
             if (reader.HasRows)
             {
                 if (!reader.IsClosed) reader.Close();
-                return false;
+                return 3;
             }
             if (!reader.IsClosed) reader.Close();
-            return true; // 중복되지 않으면 true 반환
+            return 0; // 중복되지 않으면 true 반환
         }
         catch (Exception e)
         {
             Debug.Log(e.Message);
             if (!reader.IsClosed) reader.Close();
-            return false;
+            return 4;
         }
     }
 
