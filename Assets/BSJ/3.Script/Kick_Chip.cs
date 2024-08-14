@@ -7,12 +7,18 @@ public class Kick_Chip : MonoBehaviour
     private Vector3 endPoint;
     private LineRenderer lineRenderer;
     private bool isDragging = false;
-
+    private bool isDie;
     public float forceMultiplier = 10f; // 임펄스의 강도를 조정
     public int circleSegments = 200; // 원을 구성하는 세그먼트 수
     public float maxRadius = 50f; // 원의 최대 반지름
     private float currentRadius = 0f; // 원의 현재 반지름
 
+    private PutOn putOn_Player;
+
+    private void OnEnable()
+    {
+        isDie = false;
+    }
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -84,7 +90,10 @@ public class Kick_Chip : MonoBehaviour
             rb.AddForce(-forceDirection.normalized * forceMultiplier * currentRadius, ForceMode.Impulse);
         }
     }
-
+    public void SetPutOn(PutOn put)
+    {
+        putOn_Player = put;
+    }
     // 원 그리기
     void DrawCircle(float radius, Vector3 dir)
     {
@@ -105,5 +114,19 @@ public class Kick_Chip : MonoBehaviour
             lineRenderer.SetPosition(i, new Vector3(x, 0.2f, z)); // XZ 평면에서 원을 그림
             angle += angleStep;
         }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Floor") && !isDie)
+        {
+            isDie = true;
+            Invoke("InvokeDie", 1f);
+        }
+    }
+    private void InvokeDie()
+    {
+
+        putOn_Player.Die(gameObject);
     }
 }

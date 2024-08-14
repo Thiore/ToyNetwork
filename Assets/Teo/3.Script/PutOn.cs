@@ -6,7 +6,7 @@ public class PutOn : MonoBehaviour
 {
     [SerializeField] private Transform LB;
     [SerializeField] private Transform RT;
-    private float setTime = 100f;
+    private float setTime = 10f;
     private float startTime;
     [SerializeField] private GameObject Chip_Prefabs;
     private int SetCount = 5;
@@ -24,8 +24,9 @@ public class PutOn : MonoBehaviour
         
         for (int i = 0; i < SetCount; i++)
         {
-            GameObject obj = Instantiate(select_Color.chipPrefab, transform);
+            GameObject obj = Instantiate(select_Color.chipPrefab);
             obj.SetActive(false);
+            obj.GetComponent<Kick_Chip>().SetPutOn(this);
             Chip_Queue.Enqueue(obj);
         }
 
