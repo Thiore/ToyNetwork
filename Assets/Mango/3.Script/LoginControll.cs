@@ -9,12 +9,18 @@ public class LoginControll : MonoBehaviour
     private InputField ID_input;
     private InputField Password_input;
 
+    [SerializeField]
+    private GameObject create_panel;
+
     [SerializeField] private Text Log;
 
     private void Start()
     {
         ID_input = GameObject.Find("ID_Input").GetComponent<InputField>();
         Password_input = GameObject.Find("PW_Input").GetComponent<InputField>();
+
+        create_panel = GameObject.Find("Account_Create");
+        create_panel.SetActive(false);
 
         Log = GameObject.Find("Log").GetComponent<Text>();
     }
@@ -41,6 +47,12 @@ public class LoginControll : MonoBehaviour
             //로그인 실패
             Log.text = "Check your ID or Password";
         }
+    }
+
+    public void Create_Btn()
+    {
+        create_panel.SetActive(true);
+
     }
 
     

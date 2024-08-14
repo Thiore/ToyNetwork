@@ -12,17 +12,19 @@ public class Kick_Chip : MonoBehaviour
     public int circleSegments = 200; // 원을 구성하는 세그먼트 수
     public float maxRadius = 50f; // 원의 최대 반지름
     private float currentRadius = 0f; // 원의 현재 반지름
-
+    private Camera cam;
+    [SerializeField] private GameObject lb;
     private PutOn putOn_Player;
 
     private void OnEnable()
     {
         isDie = false;
     }
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-
+        
         // LineRenderer 설정
         lineRenderer = gameObject.GetComponent<LineRenderer>();
         lineRenderer.startWidth = 0.05f;
@@ -39,10 +41,17 @@ public class Kick_Chip : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
+            
+            //Debug.Log("눌림");
             rb.angularVelocity = Vector3.zero;
             transform.rotation = Quaternion.identity;
-            
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Debug.Log(cam.transform.position);
+            Debug.Log(cam.transform.rotation);
+
+            Ray ray =cam.ScreenPointToRay(Input.mousePosition);
+            GameObject bb = Instantiate(lb);
+            Physics.Raycast(ray, out RaycastHit hitt);
+            bb.transform.position = hitt.point;
             if (Physics.Raycast(ray, out RaycastHit hit) && hit.collider.gameObject == gameObject)
             {
                 // 마우스를 클릭했을 때
@@ -56,7 +65,7 @@ public class Kick_Chip : MonoBehaviour
 
         if (isDragging)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
                 // 마우스를 드래그할 때
@@ -81,6 +90,7 @@ public class Kick_Chip : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0) && isDragging)
         {
+            Debug.Log("놨다");
             // 마우스를 놓았을 때
             isDragging = false;
             lineRenderer.enabled = false; // 라인렌더러 숨기기
@@ -93,6 +103,7 @@ public class Kick_Chip : MonoBehaviour
     public void SetPutOn(PutOn put)
     {
         putOn_Player = put;
+        cam = putOn_Player.GetComponent<Camera>();
     }
     // 원 그리기
     void DrawCircle(float radius, Vector3 dir)

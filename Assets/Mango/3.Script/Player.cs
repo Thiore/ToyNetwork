@@ -17,11 +17,12 @@ public class Player : MonoBehaviour
     public int MyColor { get { return myColor; } }
     //0Èæ 1¹é
     [SerializeField] private Material[] chip_material;
-    private bool myTurn = false;
+
+    // false Èæ true ¹é 
+    private bool myTurn = true;
+    public bool Myturn { get => myTurn; }
 
     [SerializeField] Gomoku_Logic logic;
-
-    private Action action;
 
     private float currentTime = 0f;
     private float limitTime = 10f;
@@ -37,7 +38,7 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonUp(0) && logic.result_Panel.activeSelf.Equals(false))
         {
             PutChip();
-        }
+        }       
     }
 
 
@@ -57,13 +58,14 @@ public class Player : MonoBehaviour
                         {
                             if (!logic.Check_SamSam(chip))
                             {
+                                Debug.Log("33");
                                 return;
                             }
                         }
                         chip.IsPut = true;
                         hit.collider.gameObject.GetComponent<MeshFilter>().mesh = chip.ChipMesh;
                         MeshRenderer mate = chip.GetComponent<MeshRenderer>();
-                        mate.material = myColor.Equals(0) ? chip_material[0] : chip_material[1];
+                        mate.material = myTurn ? chip_material[0] : chip_material[1];
                         logic.AddChip(chip, this);
                         TurnChange();
                     }
@@ -75,14 +77,7 @@ public class Player : MonoBehaviour
 
     public void TurnChange()
     {
-        if (myColor.Equals(0))
-        {
-            myColor = 1;
-        }
-        else if (myColor.Equals(1))
-        {
-            myColor = 0;
-        }
+        myTurn = !myTurn;
     }
 
 
