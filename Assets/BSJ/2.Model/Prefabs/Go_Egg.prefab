@@ -130,6 +130,7 @@ MonoBehaviour:
   forceMultiplier: 25
   circleSegments: 100
   maxRadius: 3
+  lb: {fileID: 9082175064443270041, guid: 0df61723f7d8964448205721348d13e8, type: 3}
 --- !u!120 &6493871588589372920
 LineRenderer:
   m_ObjectHideFlags: 0
