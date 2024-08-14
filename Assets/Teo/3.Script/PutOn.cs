@@ -6,7 +6,7 @@ public class PutOn : MonoBehaviour
 {
     [SerializeField] private Transform LB;
     [SerializeField] private Transform RT;
-    private float setTime = 100f;
+    private float setTime = 10f;
     private float startTime;
     [SerializeField] private GameObject Chip_Prefabs;
     private int SetCount = 5;
@@ -14,18 +14,20 @@ public class PutOn : MonoBehaviour
     public bool isGameStart { get; set; }
    
     private Select_color select_Color;
+    [SerializeField] private Camera cam;
 
     
     
     private void Start()
     {
-
+        TryGetComponent(out cam);
         select_Color = GetComponent<Select_color>();
         
         for (int i = 0; i < SetCount; i++)
         {
-            GameObject obj = Instantiate(select_Color.chipPrefab, transform);
+            GameObject obj = Instantiate(select_Color.chipPrefab);
             obj.SetActive(false);
+            obj.GetComponent<Kick_Chip>().SetPutOn(this);
             Chip_Queue.Enqueue(obj);
         }
 
@@ -50,7 +52,8 @@ public class PutOn : MonoBehaviour
             {
                 if (Input.GetMouseButtonDown(0))
                 {
-                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    
+                    Ray ray = cam.ScreenPointToRay(Input.mousePosition);
                     if (Physics.Raycast(ray, out RaycastHit hit))
                     {
                         if (hit.point.x > LB.position.x && hit.point.x < RT.position.x && hit.point.z > LB.position.z && hit.point.z < RT.position.z && !hit.collider.CompareTag("Chip"))

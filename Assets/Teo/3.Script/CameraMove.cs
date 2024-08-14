@@ -28,11 +28,11 @@ public class CameraMove : MonoBehaviour
             {
                 if (scroll > 0f)
                 {
-                    transform.localPosition += transform.forward * Time.deltaTime * camSpeed;
+                    transform.position += transform.forward * Time.deltaTime * camSpeed;
                 }
                 else if (scroll < 0f)
                 {
-                    transform.localPosition -= transform.forward * Time.deltaTime * camSpeed;
+                    transform.position -= transform.forward * Time.deltaTime * camSpeed;
                 }
 
             }

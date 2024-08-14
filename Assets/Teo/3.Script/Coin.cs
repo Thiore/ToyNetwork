@@ -40,17 +40,18 @@ public class Coin : MonoBehaviour
 
             if (dotProduct > 0)
             {
-                
-                Debug.Log("화이트");
+
+                //Debug.Log("화이트");
+                //Invoke("SetPlayerType(White)", 3f);
                 SetPlayerType("White");
 
             }
             else if (dotProduct < 0)
             {
-                
-                Debug.Log("블랙");
-                SetPlayerType("Black");
 
+                //Debug.Log("블랙");
+                //Invoke("SetPlayerType(Black)", 3f);
+                SetPlayerType("Black");
             }
             else
             {
@@ -97,15 +98,21 @@ public class Coin : MonoBehaviour
     {
         if (type == "Black")
         {
-            puton.isGameStart = true; 
-            
-            
+            puton.isGameStart = true;
+            Invoke("Coin_False", 3f);
+
+
         }
         else if (type == "White")
         {
-            puton.isGameStart = false; 
-            
+            puton.isGameStart = true;
+            Invoke("Coin_False", 3f);
         }
+    }
+
+    private void Coin_False()
+    {
+        gameObject.SetActive(false);
     }
 
 }
