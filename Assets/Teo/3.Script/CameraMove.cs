@@ -28,11 +28,11 @@ public class CameraMove : MonoBehaviour
             {
                 if (scroll > 0f)
                 {
-                    transform.localPosition += transform.forward * Time.deltaTime * camSpeed;
+                    transform.position += transform.forward * Time.deltaTime * camSpeed;
                 }
                 else if (scroll < 0f)
                 {
-                    transform.localPosition -= transform.forward * Time.deltaTime * camSpeed;
+                    transform.position -= transform.forward * Time.deltaTime * camSpeed;
                 }
 
             }
@@ -78,11 +78,11 @@ public class CameraMove : MonoBehaviour
         float Dis = Vector3.Distance(transform.position, Center.position);
         if (Dis < 10f)
         {
-            transform.localPosition -= transform.forward * Time.deltaTime * camSpeed;
+            transform.position -= transform.forward * Time.deltaTime * camSpeed;
         }
         if (Dis > 30f)
         {
-            transform.localPosition += transform.forward * Time.deltaTime * camSpeed;
+            transform.position += transform.forward * Time.deltaTime * camSpeed;
         }
     }
 
