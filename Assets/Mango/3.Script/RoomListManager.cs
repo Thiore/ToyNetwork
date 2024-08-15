@@ -38,36 +38,7 @@ public class RoomListManager : MonoBehaviour
         FetchRoomList();
     }
 
-    /// <summary>
-    /// 새로운 방을 생성하는 메서드
-    /// </summary>
-    /// <param name="roomName">방 이름</param>
-    /// <param name="maxPlayers">최대 플레이어 수</param>
-    public void CreateRoom(string roomName, int maxPlayers)
-    {
-        if (RoomManager.singleton == null)
-        {
-            Debug.LogError("RoomManager Singleton is null");
-            return;
-        }
-
-        // DB에 방 정보 저장
-        bool isCreated = sqlManager.CreateRoom(roomName, maxPlayers, "127.0.0.1");
-
-        if (isCreated)
-        {
-            // 방 목록 UI 갱신
-            FetchRoomList();
-
-            // 호스트는 로비 씬으로 이동
-            RoomManager.singleton.StartHost();
-            SceneManager.LoadScene(lobbySceneName);
-        }
-        else
-        {
-            Debug.LogError("Failed to create room in DB");
-        }
-    }
+    
 
     /// <summary>
     /// DB에서 방 목록을 가져와 UI에 업데이트하는 메서드
@@ -127,7 +98,7 @@ public class RoomListManager : MonoBehaviour
         if (room != null)
         {
             // 클라이언트로서 해당 방에 접속
-            NetworkManager.singleton.networkAddress = room.Host_ID;
+            //NetworkManager.singleton.networkAddress = room.Host_ID;
             NetworkManager.singleton.StartClient();
         }
         else

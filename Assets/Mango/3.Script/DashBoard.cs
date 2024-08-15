@@ -5,16 +5,24 @@ using UnityEngine.UI;
 
 public class DashBoard : MonoBehaviour
 {
-    private Text Nickname;
-    private Image Profile;
-    private Text O_Rate;
-    private Text K_Rate;
+    
+    [SerializeField] private Text Nickname;
+    [SerializeField] private Image Profile;
+    [SerializeField] private Text Od_Rate;
+    [SerializeField] private Text O_Rate;
+    [SerializeField] private Text K_Rate;
     private void Start()
     {
-        Nickname = GameObject.Find("Nickname").GetComponent<Text>();
-        Profile = GameObject.Find("Profile_IMG").GetComponent<Image>();
-        O_Rate = GameObject.Find("O_Rate_Text").GetComponent<Text>();
-        K_Rate = GameObject.Find("K_Rate_Text").GetComponent<Text>();
+        if(Nickname == null)
+            Nickname = GameObject.Find("Nickname").GetComponent<Text>();
+        if(Profile == null)
+            Profile = GameObject.Find("Profile_IMG").GetComponent<Image>();
+        if(Od_Rate == null)
+            Od_Rate = GameObject.Find("Od_Rate_Text").GetComponent<Text>();
+        if(O_Rate == null)
+            O_Rate = GameObject.Find("O_Rate_Text").GetComponent<Text>();
+        if(K_Rate == null)
+            K_Rate = GameObject.Find("K_Rate_Text").GetComponent<Text>();
 
         Init();
     }
