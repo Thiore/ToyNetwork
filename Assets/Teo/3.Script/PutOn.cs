@@ -14,13 +14,13 @@ public class PutOn : MonoBehaviour
     public bool isGameStart { get; set; }
    
     private Select_color select_Color;
-    [SerializeField] private Camera cam;
+    private Camera cam;
 
     
     
     private void Start()
     {
-        TryGetComponent(out cam);
+        cam = GameObject.Find("Camera").GetComponent<Camera>();
         select_Color = GetComponent<Select_color>();
         
         for (int i = 0; i < SetCount; i++)
