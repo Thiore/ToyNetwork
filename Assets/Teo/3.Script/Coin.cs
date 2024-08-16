@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class Coin : MonoBehaviour
+public class Coin : NetworkBehaviour
 {
     private Rigidbody rb;
     [SerializeField] private float Force;
@@ -16,6 +17,7 @@ public class Coin : MonoBehaviour
         TryGetComponent(out rb);
         isThrow = false;
         puton = Player_1P.GetComponent<PutOn>();
+        
 
     }
    
