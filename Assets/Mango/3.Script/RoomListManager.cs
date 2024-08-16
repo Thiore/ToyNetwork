@@ -18,17 +18,17 @@ public class RoomListManager : MonoBehaviour
 
     private void Awake()
     {
-        // 싱글톤 인스턴스 설정
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject); // 씬 전환 시 객체를 유지
-        }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
+        //// 싱글톤 인스턴스 설정
+        //if (Instance == null)
+        //{
+        //    Instance = this;
+        //    DontDestroyOnLoad(gameObject); // 씬 전환 시 객체를 유지
+        //}
+        //else
+        //{
+        //    Destroy(gameObject);
+        //    return;
+        //}
 
         sqlManager = SQL_Manager.instance; // SQL_Manager 인스턴스 가져오기
     }
