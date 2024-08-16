@@ -7,15 +7,17 @@ using MySql.Data.MySqlClient;
 using System;
 using System.IO;
 
+
+
 // 방 정보 클래스
 public class Room_info
 {
     public int Room_ID { get; private set; }  // 방 ID
     public string Room_Name { get; private set; }  // 방 이름
     public string Game_Type { get; private set; }  // 게임 이름
-    public int Current_Players { get; private set; }  // 현재 플레이어 수
-    public string Host_Name { get; private set; }  // 방장 이름
-    public string Password { get; private set; }  // 비밀번호
+    public int Current_Players;  // 현재 플레이어 수
+    public string Host_Name;  // 방장 이름
+    public string Password;  // 비밀번호
 
     // Room_info 클래스의 생성자
     public Room_info(int roomID, string roomName, string gameType, int currentPlayers, string hostName, string password = null)
@@ -66,7 +68,8 @@ public class User_info
 public class SQL_Manager : MonoBehaviour
 {
     public User_info info; // 현재 로그인된 사용자의 정보를 저장
-    public List<Room_info> roomList = new List<Room_info>(); // 방 목록
+    //public List<Room_info> roomList = new List<Room_info>(); // 방 목록
+    public Dictionary<int, Room_info> roomDic = new Dictionary<int, Room_info>();
 
     public MySqlConnection connection; // DB 연결을 위한 객체
     public MySqlDataReader reader; // SQL 쿼리 결과를 읽어오는 객체
@@ -466,6 +469,40 @@ public class SQL_Manager : MonoBehaviour
         }
     }
 
+    public int SelectRoomID()
+    {
+        try
+        {
+            if (!connection_check(connection))
+            {
+                return 0;
+            }
+
+            // SQL 쿼리로 ID가 존재하는지 확인
+            string SQL_Command =
+                string.Format($@"SELECT RoomID FROM roomlist WHERE HostName = '{info.User_Name}'");
+            MySqlCommand cmd = new MySqlCommand(SQL_Command, connection);
+            reader = cmd.ExecuteReader();
+
+            // ID가 이미 존재하면 false 반환
+            if (reader.HasRows)
+            {
+                reader.Read();
+                int roomid = reader.GetInt32("RoomID");
+                if (!reader.IsClosed) reader.Close();
+                return roomid;
+            }
+            if (!reader.IsClosed) reader.Close();
+            return 0;
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.Message);
+            if (!reader.IsClosed) reader.Close();
+            return 0;
+        }
+    }
+
     // RoomList 테이블에서 특정 방을 삭제하는 메서드
     // 방이 종료되거나 삭제될 때 호출되어 DB에서 방 정보를 제거
     public bool DeleteRoom(int roomID)
@@ -485,6 +522,7 @@ public class SQL_Manager : MonoBehaviour
 
             if (count.Equals(1))
             {
+                roomDic.Remove(roomID);
                 Debug.Log("Room deleted successfully");
                 return true;
             }
@@ -508,7 +546,7 @@ public class SQL_Manager : MonoBehaviour
                 return;
             }
 
-            roomList.Clear(); // 기존 방 목록 초기화
+            roomDic.Clear(); // 기존 방 목록 초기화
 
             // RoomList 테이블에서 모든 방 정보 조회
             string SQL_Command = "SELECT * FROM RoomList;";
@@ -523,19 +561,23 @@ public class SQL_Manager : MonoBehaviour
                     string roomName = (reader.IsDBNull(1)) ? string.Empty : (string)reader["RoomName"];
                     string gameType = (reader.IsDBNull(2)) ? string.Empty : (string)reader["GameType"];
                     int currentPlayers = reader.GetInt32("CurrentPlayers");
-                    string hostName = (reader.IsDBNull(0)) ? string.Empty : (string)reader["GameType"];
+                    string hostName = (reader.IsDBNull(4)) ? string.Empty : (string)reader["GameType"];
+                    string password = (reader.IsDBNull(5)) ? null : (string)reader["Password"];
 
                     // 조회한 방 정보를 Room_info 객체로 생성하여 roomList에 추가
-                    Room_info room = new Room_info(roomID, roomName, gameType, currentPlayers, hostName);
-                    roomList.Add(room);
+                    Room_info room = new Room_info(roomID, roomName, gameType, currentPlayers, hostName, password);
+                    if(!roomDic.ContainsKey(roomID))
+                        roomDic.Add(roomID,room);
                 }
             }
             if (!reader.IsClosed) reader.Close();
+            return;
         }
         catch (Exception e)
         {
             Debug.Log(e.Message);
             if (!reader.IsClosed) reader.Close();
+            return;
         }
     }
 
@@ -560,6 +602,7 @@ public class SQL_Manager : MonoBehaviour
 
             if (count >= 1)
             {
+                roomDic[roomID].Current_Players = currentPlayers;
                 Debug.Log("Room player count updated successfully");
                 return true;
             }
@@ -571,5 +614,40 @@ public class SQL_Manager : MonoBehaviour
             return false;
         }
     }
+    // 특정 방의 현재 플레이어 수를 업데이트하는 메서드
+    // 플레이어가 방에 참가하거나 나갈 때 호출
+    public bool UpdateRoomChangeHost(int roomID, string hostName)
+    {
+        try
+        {
+            if (!connection_check(connection))
+            {
+                return false;
+            }
+
+            // 특정 방의 현재 플레이어 수 업데이트
+            string SQL_Command =
+                string.Format($@"UPDATE RoomList 
+                                 SET HostName = {hostName} 
+                                 WHERE Room_ID = {roomID};");
+            MySqlCommand cmd = new MySqlCommand(SQL_Command, connection);
+            int count = cmd.ExecuteNonQuery();
+
+            if (count >= 1)
+            {
+                roomDic[roomID].Host_Name = hostName;
+                Debug.Log("Room change Host updated successfully");
+                return true;
+            }
+            return false;
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.Message);
+            return false;
+        }
+    }
+
     
+
 }

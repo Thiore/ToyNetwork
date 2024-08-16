@@ -39,6 +39,7 @@ public class LoginControll : MonoBehaviour
 
         if (SQL_Manager.instance.Login(ID_input.text, Password_input.text))
         {
+
             //로그인이 성공
             SceneManager.LoadScene("RoomList_Scene");
         }
