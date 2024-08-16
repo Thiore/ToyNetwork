@@ -5,10 +5,11 @@ using UnityEngine;
 public class CameraMove : MonoBehaviour
 {
     [SerializeField] private float camSpeed;
-    [SerializeField] private Transform Center;
+    private Transform Center;
 
     private void Awake()
     {
+        Center = GameObject.Find("go_game_board_0").transform;
         if(camSpeed.Equals(0))
         {
             camSpeed = 10f;
