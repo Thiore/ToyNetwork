@@ -173,7 +173,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  coin_Spawn: {fileID: 6545285056633645601, guid: f09fc9e6dc59ae94fa36f7d4d8a7546b, type: 3}
+  coinPrefab: {fileID: 6545285056633645601, guid: f09fc9e6dc59ae94fa36f7d4d8a7546b, type: 3}
 --- !u!4 &885339939
 Transform:
   m_ObjectHideFlags: 0
