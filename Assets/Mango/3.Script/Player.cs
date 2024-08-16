@@ -1,16 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.ComTypes;
 using UnityEngine;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class Player : MonoBehaviour
 {
     public Color color;
     public enum Color
     {
-        Black = 0,
-        White
+        White = 0,
+        Black
     }
 
     private int myColor = 0;
@@ -34,13 +34,13 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        //GoGame();
         if (Input.GetMouseButtonUp(0) && logic.result_Panel.activeSelf.Equals(false))
         {
-            PutChip();
-        }       
-    }
 
+            PutChip();
+
+        }
+    }
 
     private void PutChip()
     {
@@ -50,29 +50,25 @@ public class Player : MonoBehaviour
         {
             if (hit.collider != null)
             {
-                if (hit.collider.TryGetComponent(out Chip chip))
-                {
-                    if (!chip.IsPut)
-                    {
-                        if(myColor.Equals(0))
-                        {
-                            if (!logic.Check_SamSam(chip))
-                            {
-                                Debug.Log("33");
-                                return;
-                            }
-                        }
-                        chip.IsPut = true;
-                        hit.collider.gameObject.GetComponent<MeshFilter>().mesh = chip.ChipMesh;
-                        MeshRenderer mate = chip.GetComponent<MeshRenderer>();
-                        mate.material = myTurn ? chip_material[0] : chip_material[1];
-                        logic.AddChip(chip, this);
-                        TurnChange();
-                    }
-                }
+                DrawBoard(hit.collider.gameObject);
             }
         }
     }
+
+
+    private void DrawBoard(GameObject obj)
+    {
+        if (obj.TryGetComponent(out Chip chip) && !chip.IsPut)
+        {
+            obj.GetComponent<MeshFilter>().mesh = chip.ChipMesh;
+            MeshRenderer mate = chip.GetComponent<MeshRenderer>();
+            mate.material = myTurn ? chip_material[0] : chip_material[1];
+            logic.AddChip(chip, this);
+            chip.IsPut = true;
+            TurnChange();
+        }
+    }
+
 
 
     public void TurnChange()
@@ -81,38 +77,32 @@ public class Player : MonoBehaviour
     }
 
 
-    public void GoGame()
+
+
+    public void TranslucentChip()
     {
-        while (currentTime >= 0f)
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
         {
-            currentTime -= Time.deltaTime;
-            Debug.Log(currentTime);
-            if (currentTime <= 0f)
+            if (hit.collider != null)
             {
-                currentTime = limitTime;
-                TurnChange();
+                if(hit.collider.gameObject.TryGetComponent<Chip>(out Chip chip))
+                {
+                    if (!chip.IsPut && logic.result_Panel.activeSelf.Equals(false))
+                    {
+                        transform.GetComponent<MeshFilter>().mesh = chip.ChipMesh;
+                        MeshRenderer mate = transform.GetComponent<MeshRenderer>();
+
+                        mate.material = myTurn ? chip.CheckChip_Mate[0] : chip.CheckChip_Mate[1];
+                    }
+                }
             }
         }
-        //StartCoroutine(GoGame_co());
+
     }
 
-    private IEnumerator GoGame_co()
-    {
-        currentTime = limitTime;
-        while (currentTime >= 0f)
-        {
-            currentTime -= Time.deltaTime;
-            Debug.Log(currentTime);
-            if (currentTime <= 0f)
-            {
-                currentTime = limitTime;
-                TurnChange();
-                yield return new WaitForSecondsRealtime(limitTime);
-            }
-        }
-        Debug.Log("ÅÏÃ¾");
-        GoGame();
-    }
+
 
 
 }
