@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+    public enum PlayerType { Black, White}
 
 public class Select_color : MonoBehaviour
 {
-    public enum PlayerType { Black, White}
     public PlayerType playerType;
 
     public Material chipBlack;
