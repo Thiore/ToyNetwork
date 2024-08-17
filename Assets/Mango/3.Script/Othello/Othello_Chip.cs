@@ -56,17 +56,17 @@ public class Othello_Chip : MonoBehaviour
             Change_Color(1f);
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            this.GetComponent<Rigidbody>().useGravity=true;
-            this.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-            this.GetComponent<Rigidbody>().AddForce(0f, 100f, 100f);
-            float randomX = Random.RandomRange(-100f, 100f);
-            float randomY = Random.RandomRange(-100f, 100f);
-            float randomZ = Random.RandomRange(-100f, 100f);
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    this.GetComponent<Rigidbody>().useGravity=true;
+        //    this.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+        //    this.GetComponent<Rigidbody>().AddForce(0f, 100f, 100f);
+        //    float randomX = Random.Range(-100f, 100f);
+        //    float randomY = Random.Range(-100f, 100f);
+        //    float randomZ = Random.Range(-100f, 100f);
 
-            this.GetComponent<Rigidbody>().MoveRotation(new Quaternion(randomX, randomY, randomZ, 1f).normalized);
-        }
+        //    this.GetComponent<Rigidbody>().MoveRotation(new Quaternion(randomX, randomY, randomZ, 1f).normalized);
+        //}
     }
 
     private void Change_Color(float value)

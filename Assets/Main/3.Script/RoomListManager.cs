@@ -10,7 +10,6 @@ public class RoomListManager : MonoBehaviour
 
     [SerializeField] private Transform contentPanel; // Scroll View의 Content에 연결
     [SerializeField] private Room_Btn_Control roomButtonPrefab; // 방 버튼 프리팹
-    [SerializeField] private string lobbySceneName = "Lobby"; // 로비 씬 이름
 
     //private List<GameObject> roomButtons = new List<GameObject>(); // 방 버튼 리스트
     private Dictionary<int, Room_Btn_Control> roomButtonDic = new Dictionary<int, Room_Btn_Control>();
@@ -49,22 +48,23 @@ public class RoomListManager : MonoBehaviour
     {
         // DB에서 방 목록을 가져옴
         sqlManager.FetchRoomList();
-
-        // 방 목록 UI에 추가
-        foreach(int room in sqlManager.roomDic.Keys)
+        if(sqlManager.roomDic.Count>0)
         {
-            if (!roomButtonDic.ContainsKey(room))
-                AddRoomToUI(sqlManager.roomDic[room]);
-        }
-        foreach(int room in roomButtonDic.Keys)
-        {
-            if (!sqlManager.roomDic.ContainsKey(room))
+            // 방 목록 UI에 추가
+            foreach (int room in sqlManager.roomDic.Keys)
             {
-                Destroy(roomButtonDic[room].gameObject);
-                roomButtonDic.Remove(room);
-            }               
+                if (!roomButtonDic.ContainsKey(room))
+                    AddRoomToUI(sqlManager.roomDic[room]);
+            }
+            foreach (int room in roomButtonDic.Keys)
+            {
+                if (!sqlManager.roomDic.ContainsKey(room))
+                {
+                    Destroy(roomButtonDic[room].gameObject);
+                    roomButtonDic.Remove(room);
+                }
+            }
         }
-
     }
 
     /// <summary>

@@ -17,7 +17,13 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/CJM/1.Scene/CJMScene.unity
     guid: 095c80aa442e8da409da99e0696f6afd
-  - enabled: 1
-    path: Assets/Mango/1.Scene/Othello.unity
+  - enabled: 0
+    path: Assets/Main/1.Scene/Othello.unity
     guid: 9ed9b2ff9d2efc3489666782f60217d8
+  - enabled: 1
+    path: Assets/Main/1.Scene/Login.unity
+    guid: 81399f5f58a234b4a927e5afdb19c6be
+  - enabled: 1
+    path: Assets/Main/1.Scene/Lobby.unity
+    guid: cb04686e7b9ce4340a585dc1ab4a0baa
   m_configObjects: {}

@@ -41,7 +41,7 @@ public class LoginControll : MonoBehaviour
         {
 
             //로그인이 성공
-            SceneManager.LoadScene("RoomList_Scene");
+            SceneManager.LoadScene("Lobby");
         }
         else
         {

@@ -35,14 +35,19 @@ public class Othello_Board : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            this.GetComponent<Rigidbody>().useGravity = true;
-            this.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
-            this.GetComponent<Rigidbody>().AddForce(0f,3000f,3000f);
-            float randomX = Random.RandomRange(-1f, 1f);
-            float randomY = Random.RandomRange(-1f, 1f);
-            float randomZ = Random.RandomRange(-1f, 1f);
+            TryGetComponent(out Rigidbody rigid);
+            
 
-            this.GetComponent<Rigidbody>().MoveRotation(new Quaternion(randomX,randomY,randomZ,1f).normalized);
+            rigid.AddForce(Vector3.up*50f + Vector3.forward*5f, ForceMode.Impulse);
+            rigid.angularVelocity = Vector3.right * 10f;
+            //this.GetComponent<Rigidbody>().useGravity = true;
+            //this.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.None;
+            //this.GetComponent<Rigidbody>().AddForce(0f,3000f,3000f);
+            //float randomX = Random.RandomRange(-1f, 1f);
+            //float randomY = Random.RandomRange(-1f, 1f);
+            //float randomZ = Random.RandomRange(-1f, 1f);
+
+            //this.GetComponent<Rigidbody>().MoveRotation(new Quaternion(randomX,randomY,randomZ,1f).normalized);
         }
     }
 

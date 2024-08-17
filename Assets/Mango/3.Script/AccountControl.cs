@@ -67,8 +67,10 @@ public class AccountControl : MonoBehaviour
 
     public void Password_Check()
     {
-        if(Pass_Input.text.Equals(""))
+        if(Pass_Input.text.Length<4)
         {
+            Log_1.text = "비밀번호가 적절하지 않습니다.";
+            isPasswordCheck = false;
             return;
         }
         if (!Pass_Input.text.Equals(Pass_Check_Input.text)) 
