@@ -7,9 +7,8 @@ public class Gomoku_Logic : MonoBehaviour
     // 이미 둔것들 
     private List<Chip> Black_Chip = new List<Chip>();
     private List<Chip> White_Chip = new List<Chip>();
-
-    [SerializeField] private GameObject Chip_Pivot;
     [SerializeField] public GameObject result_Panel; //이건 조립 
+    [SerializeField] private GameObject Chip_Pivot;
 
     private void Awake()
     {
@@ -28,6 +27,7 @@ public class Gomoku_Logic : MonoBehaviour
             }
         }
     }
+
 
     // 착수 이후 결과값 검출
     private void Check_Chip(Player player, Chip lastChip)

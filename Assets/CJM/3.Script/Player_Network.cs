@@ -51,7 +51,7 @@ public class Player_Network : NetworkBehaviour
         //GoGame();
         if (Input.GetMouseButtonUp(0) && logic.result_Panel.activeSelf.Equals(false))
         {
-            PutChip();
+            Send();
         }
     }
 
@@ -80,7 +80,7 @@ public class Player_Network : NetworkBehaviour
                         hit.collider.gameObject.GetComponent<MeshFilter>().mesh = chip.ChipMesh;
                         MeshRenderer mate = chip.GetComponent<MeshRenderer>();
                         mate.material = myTurn ? chip_material[0] : chip_material[1];
-                       // logic.AddChip(chip, this);
+                        //logic.AddChip(chip, this);
                         TurnChange();
                     }
                 }
@@ -131,17 +131,17 @@ public class Player_Network : NetworkBehaviour
 
 
 
-    [ClientCallback]
-    private void OnDestroy()
+    [Client]
+    private void Send()
     {
-        if (!isLocalPlayer) return;
+        CmdPut();
     }
 
 
     [Command]
     private void CmdPut()
     {
-
+        PlayerPutonChip();
     }
 
 

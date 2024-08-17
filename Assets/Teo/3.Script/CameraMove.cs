@@ -32,7 +32,7 @@ public class CameraMove : NetworkBehaviour
     //{
     //    if (isLocalPlayer)
     //    {
-    //        // ·ÎÄÃ ÇÃ·¹ÀÌ¾î°¡ ¾Æ´Ñ °æ¿ì, ¸ÞÀÎ Ä«¸Þ¶ó ºñÈ°¼ºÈ­
+    //        // ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾î°¡ ï¿½Æ´ï¿½ ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­
     //        if (mainCamera != null)
     //        {
     //            mainCamera.gameObject.SetActive(false);
@@ -56,7 +56,7 @@ public class CameraMove : NetworkBehaviour
     {
         if (!isLocalPlayer) return;
 
-        // Ä«¸Þ¶ó À§Ä¡¿Í È¸ÀüÀ» µ¿±âÈ­
+        // Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­
         if (mainCamera != null)
         {
             mainCamera.transform.position = transform.position;
@@ -102,4 +102,25 @@ public class CameraMove : NetworkBehaviour
             }
         }
     }
+//<<<<<<< HEAD
+//    private void LateUpdate()
+//    {
+//        Vector3 Rot = transform.eulerAngles;
+//        float x = Rot.x;
+//        x = Mathf.Clamp(x, 30f, 90f);
+//        Rot.x = x;
+//        transform.eulerAngles = Rot;
+//        float Dis = Vector3.Distance(transform.position, Center.position);
+//        if (Dis < 10f)
+//        {
+//            transform.position -= transform.forward * Time.deltaTime * camSpeed;
+//        }
+//        if (Dis > 30f)
+//        {
+//            transform.position += transform.forward * Time.deltaTime * camSpeed;
+//        }
+//    }
+
+//=======
+//>>>>>>> origin/BSJ/Basic
 }
