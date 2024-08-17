@@ -40,7 +40,7 @@ public class PutOn : NetworkBehaviour
             //Debug.Log("¸¶¿ì½º ±ÇÇÑ µé¾î¿È");
             return;
         }
-        Debug.Log("Put on Update µé¾î¿È");
+        //Debug.Log("Put on Update µé¾î¿È");
         if (startTime < setTime)
         {
             startTime += Time.deltaTime;

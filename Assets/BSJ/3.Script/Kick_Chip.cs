@@ -13,7 +13,7 @@ public class Kick_Chip : MonoBehaviour
     public float maxRadius = 50f; // 원의 최대 반지름
     private float currentRadius = 0f; // 원의 현재 반지름
     private Camera cam;
-    [SerializeField] private GameObject lb;
+    //[SerializeField] private GameObject lb;
     private PutOn putOn_Player;
 
     private void OnEnable()
@@ -49,9 +49,9 @@ public class Kick_Chip : MonoBehaviour
             Debug.Log(cam.transform.rotation);
 
             Ray ray =cam.ScreenPointToRay(Input.mousePosition);
-            GameObject bb = Instantiate(lb);
+            //GameObject bb = Instantiate(lb);
             Physics.Raycast(ray, out RaycastHit hitt);
-            bb.transform.position = hitt.point;
+            //bb.transform.position = hitt.point;
             if (Physics.Raycast(ray, out RaycastHit hit) && hit.collider.gameObject == gameObject)
             {
                 // 마우스를 클릭했을 때
