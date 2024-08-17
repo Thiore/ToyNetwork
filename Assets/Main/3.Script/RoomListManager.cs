@@ -6,13 +6,14 @@ using Mirror;
 
 public class RoomListManager : MonoBehaviour
 {
-    public static RoomListManager Instance { get; private set; } // 싱글톤 인스턴스
+    //public static RoomListManager Instance { get; private set; } // 싱글톤 인스턴스
 
     [SerializeField] private Transform contentPanel; // Scroll View의 Content에 연결
-    [SerializeField] private GameObject roomButtonPrefab; // 방 버튼 프리팹
-    [SerializeField] private string lobbySceneName = "Lobby_Scene"; // 로비 씬 이름
+    [SerializeField] private Room_Btn_Control roomButtonPrefab; // 방 버튼 프리팹
+    [SerializeField] private string lobbySceneName = "Lobby"; // 로비 씬 이름
 
-    private List<GameObject> roomButtons = new List<GameObject>(); // 방 버튼 리스트
+    //private List<GameObject> roomButtons = new List<GameObject>(); // 방 버튼 리스트
+    private Dictionary<int, Room_Btn_Control> roomButtonDic = new Dictionary<int, Room_Btn_Control>();
 
     private SQL_Manager sqlManager; // SQL_Manager 인스턴스 참조
 
@@ -38,7 +39,7 @@ public class RoomListManager : MonoBehaviour
         FetchRoomList();
     }
 
-    
+
 
     /// <summary>
     /// DB에서 방 목록을 가져와 UI에 업데이트하는 메서드
@@ -49,18 +50,21 @@ public class RoomListManager : MonoBehaviour
         // DB에서 방 목록을 가져옴
         sqlManager.FetchRoomList();
 
-        // 기존 UI 삭제
-        foreach (GameObject button in roomButtons)
-        {
-            Destroy(button);
-        }
-        roomButtons.Clear();
-
         // 방 목록 UI에 추가
-        foreach (Room_info room in sqlManager.roomList)
+        foreach(int room in sqlManager.roomDic.Keys)
         {
-            AddRoomToUI(room);
+            if (!roomButtonDic.ContainsKey(room))
+                AddRoomToUI(sqlManager.roomDic[room]);
         }
+        foreach(int room in roomButtonDic.Keys)
+        {
+            if (!sqlManager.roomDic.ContainsKey(room))
+            {
+                Destroy(roomButtonDic[room].gameObject);
+                roomButtonDic.Remove(room);
+            }               
+        }
+
     }
 
     /// <summary>
@@ -69,42 +73,14 @@ public class RoomListManager : MonoBehaviour
     /// <param name="roomInfo">방 정보 객체</param>
     private void AddRoomToUI(Room_info roomInfo)
     {
-        GameObject newButton = Instantiate(roomButtonPrefab, contentPanel);
-
-        // UI 요소 가져오기
-        Text name = newButton.transform.Find("Room_Text").GetComponent<Text>();
-        Image profile = newButton.transform.Find("Profile").GetComponent<Image>();
-        Text game = newButton.transform.Find("Game_Text").GetComponent<Text>();
+        Room_Btn_Control newButton = Instantiate(roomButtonPrefab, contentPanel);
 
         // UI 요소 업데이트
-        name.text = SQL_Manager.instance.info.User_Name;
-        profile.sprite = Resources.Load<Sprite>($"{SQL_Manager.instance.info.User_Img}");
-        game.text = "오셀로"; // 혹은 roomInfo.GameType에 따른 게임 이름 설정
+        newButton.SetRoomBtn(roomInfo);
 
         // 방에 입장하는 버튼 클릭 이벤트 설정
-        newButton.GetComponent<Button>().onClick.AddListener(() => JoinRoom(roomInfo.Room_ID));
-        roomButtons.Add(newButton);
-    }
-
-    /// <summary>
-    /// 특정 방에 접속하는 메서드
-    /// </summary>
-    /// <param name="roomID">방 ID</param>
-    public void JoinRoom(int roomID)
-    {
-        // DB에서 해당 방 정보를 가져옴
-        Room_info room = sqlManager.roomList.Find(r => r.Room_ID == roomID);
-
-        if (room != null)
-        {
-            // 클라이언트로서 해당 방에 접속
-            //NetworkManager.singleton.networkAddress = room.Host_ID;
-            NetworkManager.singleton.StartClient();
-        }
-        else
-        {
-            Debug.LogError("Room not found in DB");
-        }
+        newButton.GetComponent<Button>().onClick.AddListener(() => newButton.Join_Room());
+        roomButtonDic.Add(roomInfo.Room_ID,newButton);
     }
 
     /// <summary>

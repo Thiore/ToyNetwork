@@ -6,15 +6,33 @@ using System;
 
 public class RoomManager : NetworkRoomManager
 {
-    [SerializeField] GameObject Othello_Player;
-    [SerializeField] GameObject Gomoku_Player;
-    [SerializeField] GameObject Hit_Player;
+    public static RoomManager instance = null;
+
+    [SerializeField] private GameObject OthelloPlayer;
+    [SerializeField] private GameObject GomokuPlayer;
+    [SerializeField] private GameObject HitChipsPlayer;
+
+    private readonly string Othello = "Othello";
+    private readonly string Gomoku = "Gomoku";
+    private readonly string HitChips = "HitChips";
 
 
     public override void Awake()
     {
-        networkAddress = SQL_Manager.instance.ServerIP;
         base.Awake();
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+            //networkAddress = SQL_Manager.instance.ServerIP;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+        
+        
     }
 
     public override void Start()
@@ -255,6 +273,24 @@ public class RoomManager : NetworkRoomManager
         base.ServerChangeScene(newSceneName);
     }
 
+    public void SetGame(string type)
+    {
+        switch (type)
+        {
+            case "Othello":
+                playerPrefab = OthelloPlayer;
+                GameplayScene = Othello;
+                break;
+            case "Gomoku":
+                playerPrefab = GomokuPlayer;
+                GameplayScene = Gomoku;
+                break;
+            case "HitChips":
+                playerPrefab = HitChipsPlayer;
+                GameplayScene = HitChips;
+                break;
+        }
+    }
     
 
     public override void OnApplicationQuit()
