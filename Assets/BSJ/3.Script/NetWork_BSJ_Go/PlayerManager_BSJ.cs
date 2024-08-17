@@ -9,7 +9,7 @@ public class PlayerManager_BSJ : NetworkBehaviour
     {
         base.OnStartLocalPlayer();
         // 클라이언트에서 서버로 권한 부여 요청
-        if (isLocalPlayer)
+        if (hasAuthority)
         {
             CmdRequestClientAuthority();
         }
@@ -30,7 +30,7 @@ public class PlayerManager_BSJ : NetworkBehaviour
     {
         base.OnStopLocalPlayer();
         // 서버에 클라이언트 권한 해제 요청
-        if (isLocalPlayer)
+        if (hasAuthority)
         {
             CmdReleaseClientAuthority();
         }
