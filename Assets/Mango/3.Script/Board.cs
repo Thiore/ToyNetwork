@@ -19,6 +19,7 @@ public class Board : NetworkBehaviour
         chipPrefab = Resources.Load("Prefabs/GoGame_Chip") as GameObject;
     }
 
+    [ClientRpc]
     public void InitBoard()
     {
         int index = 0;
@@ -28,13 +29,10 @@ public class Board : NetworkBehaviour
             {
                 Createchip(index, j, i);
                 index++;
-
-
             }
         }
     }
 
-    [Command]
     public void Createchip(int index, int j, int i)
     {
         GameObject chipobj = Instantiate(chipPrefab) as GameObject;
@@ -50,7 +48,6 @@ public class Board : NetworkBehaviour
         }
     }
 
-    [ClientRpc]
     public void RPCSetPre(GameObject obj, Transform pre)
     {
         obj.transform.SetParent(pre);

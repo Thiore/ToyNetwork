@@ -14,6 +14,7 @@ public class gotestServer : MonoBehaviour
     public eType type;
 
     private NetworkManager manager;
+    private GameObject board;
 
     private void Start()
     {
@@ -41,13 +42,20 @@ public class gotestServer : MonoBehaviour
             NetworkServer.OnConnectedEvent += (NetworkConnectionToClient) =>
             {
                 Debug.Log($"New Client Connect : {NetworkConnectionToClient.address}");
+
+                BoardGO();
+                NetworkServer.Spawn(this.board);
             };
             NetworkServer.OnDisconnectedEvent += (NetworkConnectionToClient) => { Debug.Log($"Client DisConnect : {NetworkConnectionToClient.address}"); };
 
-            BoardGO();
-
         }
     }
+
+    public void NetworkTest(NetworkConnection conn)
+    {
+        NetworkServer.Spawn(board.gameObject, conn);
+    }
+
 
 
     public void BoardGO()
@@ -56,7 +64,9 @@ public class gotestServer : MonoBehaviour
         var board = Instantiate(boardfab).transform.GetComponent<Board>();
         var iden = board.GetComponent<NetworkIdentity>();
         board.InitBoard();
+        this.board = board.gameObject;
         NetworkServer.Spawn(board.gameObject, iden.connectionToClient);
+
     }
 
     public void Start_Client()
@@ -65,6 +75,9 @@ public class gotestServer : MonoBehaviour
         Debug.Log(NetworkManager.singleton.isNetworkActive);
         Debug.Log(NetworkServer.active);
         Debug.Log($"{manager.networkAddress} StartClient");
+
+        NetworkManager.singleton.OnClientConnect();
+
 
         //if(SQL_Manager.instance.SetIP())
         //{

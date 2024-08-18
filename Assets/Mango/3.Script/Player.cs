@@ -44,7 +44,6 @@ public class Player : NetworkBehaviour
 
     private void Update()
     {
-        if (!isLocalPlayer) return;
 
         if (Input.GetMouseButtonUp(0) && logic.result_Panel.activeSelf.Equals(false))
         {
@@ -97,6 +96,52 @@ public class Player : NetworkBehaviour
     }
 
 
+    public override void OnStartServer()
+    {
+        // base.OnStartServer();
+
+        if (NetworkClient.isConnected)
+        {
+            // 서버에 연결된 상태일 때만 메시지 전송
+            Debug.Log("야 ㄴ결 뇌");
+        }
+        else
+        {
+            Debug.LogWarning("서버에 연결되지 않았습니다. 메시지를 보낼 수 없습니다.");
+        }
+
+        // 서버에서 권한을 부여합니다.
+        NetworkIdentity identity = GetComponent<NetworkIdentity>();
+        NetworkConnectionToClient conn = connectionToClient;
+
+        if (identity != null && conn != null)
+        {
+            AssignClientAuthority(identity, conn);
+        }
+
+
+    }
+
+
+    public void AssignClientAuthority(NetworkIdentity networkIdentity, NetworkConnectionToClient conn)
+    {
+        if (networkIdentity != null && !hasAuthority) 
+        {
+            networkIdentity.AssignClientAuthority(conn);
+        }
+    }
+
+
+    // 서버에 클라이언트 권한 부여 요청
+    [Command]
+    public void CmdRequestClientAuthority()
+    {
+        NetworkIdentity identity = GetComponent<NetworkIdentity>();
+        if (identity != null)
+        {
+            identity.AssignClientAuthority(connectionToClient);
+        }
+    }
 
 
     public void TranslucentChip()
