@@ -27,6 +27,23 @@ public class PutOn : NetworkBehaviour
             GameObject obj = Instantiate(select_Color.chipPrefab);
             obj.SetActive(false);
             obj.GetComponent<Kick_Chip>().SetPutOn(this);
+
+            // 바둑알의 레이어와 머티리얼을 설정
+            var chipRenderer = obj.GetComponent<Renderer>();
+            if (chipRenderer != null)
+            {
+                if (select_Color.playerType == PlayerType.Black)
+                {
+                    chipRenderer.material = select_Color.chipBlack;
+                    obj.layer = LayerMask.NameToLayer("Black");
+                }
+                else
+                {
+                    chipRenderer.material = select_Color.chipWhite;
+                    obj.layer = LayerMask.NameToLayer("White");
+                }
+            }
+
             Chip_Queue.Enqueue(obj);
         }
 
