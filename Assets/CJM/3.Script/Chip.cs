@@ -7,7 +7,6 @@ using UnityEngine;
 public class Chip : NetworkBehaviour
 {
     //Chip 자체는 동작하지 않고 반투명한 돌만 나오게끔 할 예정 
-    [SyncVar]
     private bool isPut = false;
     public bool IsPut { get => isPut; set => isPut = value; }
     [SerializeField] private Gomoku_Logic logic;
@@ -17,7 +16,8 @@ public class Chip : NetworkBehaviour
     //0 흑 1 백 
     [SerializeField] private Material[] checkchip_material;
     [SerializeField] private MeshRenderer meshrender;
-    public MeshRenderer ChipMesh { get => meshrender; }
+
+    public MeshRenderer MeshrenderGet { get => meshrender; set => meshrender = value; }
 
     public Material[] CheckChip_Mate { get => checkchip_material; }
 
@@ -33,6 +33,7 @@ public class Chip : NetworkBehaviour
         logic = GameObject.FindObjectOfType<Gomoku_Logic>();
         gameManager = FindObjectOfType<GoGameManager>();
     }
+
 
     private void OnMouseOver()
     {

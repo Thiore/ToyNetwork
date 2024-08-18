@@ -2,6 +2,7 @@ using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -19,7 +20,7 @@ public class Player : NetworkBehaviour
     //0Èæ 1¹é
     [SerializeField] private Material[] chip_material;
 
-    private LayerMask empty = LayerMask.NameToLayer("Empty");
+    //private LayerMask empty = LayerMask.NameToLayer("Empty");
 
     // false Èæ true ¹é 
     private bool myTurn = true;
@@ -32,11 +33,14 @@ public class Player : NetworkBehaviour
     private float limitTime = 10f;
 
 
+
     private void Awake()
     {
         logic = GameObject.FindObjectOfType<Gomoku_Logic>();
         myGameManager = GameObject.FindObjectOfType<GoGameManager>();
     }
+
+
 
     private void Update()
     {
@@ -46,11 +50,15 @@ public class Player : NetworkBehaviour
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, empty))
+            if (Physics.Raycast(ray, out hit))
             {
                 if (hit.collider != null)
                 {
-                    CmdPutChip(hit.collider.gameObject);
+                    if (hit.collider.TryGetComponent(out Chip chip))
+                    {
+                        CmdPutChip(chip);
+                        Debug.Log("¾÷µ¥ÀÌÆ®");
+                    }
                 }
             }
         }
@@ -61,19 +69,23 @@ public class Player : NetworkBehaviour
         return myColor;
     }
 
-    [Command]
-    private void CmdPutChip(GameObject obj)
+    [ClientRpc]
+    private void CmdPutChip(Chip chip)
     {
-        RPCDrawBoard(obj);
+
+        Debug.Log("cmd command");
+        RPCDrawBoard(chip);
     }
 
-    [ClientRpc]
-    private void RPCDrawBoard(GameObject obj)
+    [Command]
+    private void RPCDrawBoard(Chip chip)
     {
-        MeshRenderer mate = obj.GetComponent<MeshRenderer>();
-        mate.enabled = true;
-        mate.material = myTurn ? chip_material[0] : chip_material[1];
-        //logic.AddChip(chip, this);
+        Debug.Log(":rpc");
+        chip.MeshrenderGet.enabled = true;
+        chip.MeshrenderGet.material = myTurn ? chip_material[0] : chip_material[1];
+        logic.AddChip(chip, this);
+        Debug.Log(NetworkServer.active);
+
         TurnChange();
 
     }

@@ -36,19 +36,34 @@ public class gotestServer : MonoBehaviour
         }
         else
         {
-            manager.StartServer();
+            NetworkManager.singleton.StartServer();
             Debug.Log($"{manager.networkAddress} Start Server");
             NetworkServer.OnConnectedEvent += (NetworkConnectionToClient) =>
             {
                 Debug.Log($"New Client Connect : {NetworkConnectionToClient.address}");
             };
             NetworkServer.OnDisconnectedEvent += (NetworkConnectionToClient) => { Debug.Log($"Client DisConnect : {NetworkConnectionToClient.address}"); };
+
+            BoardGO();
+
         }
+    }
+
+
+    public void BoardGO()
+    {
+        var boardfab = Resources.Load("Prefabs/Gogame_board") as GameObject;
+        var board = Instantiate(boardfab).transform.GetComponent<Board>();
+        var iden = board.GetComponent<NetworkIdentity>();
+        board.InitBoard();
+        NetworkServer.Spawn(board.gameObject, iden.connectionToClient);
     }
 
     public void Start_Client()
     {
         manager.StartClient();
+        Debug.Log(NetworkManager.singleton.isNetworkActive);
+        Debug.Log(NetworkServer.active);
         Debug.Log($"{manager.networkAddress} StartClient");
 
         //if(SQL_Manager.instance.SetIP())
@@ -74,6 +89,7 @@ public class gotestServer : MonoBehaviour
             manager.StopServer();
         }
     }
+
 
 
 }

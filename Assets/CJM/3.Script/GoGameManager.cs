@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GoGameManager : NetworkBehaviour
+public class GoGameManager : MonoBehaviour
 {
     public int myTurn = 1;
 
@@ -16,7 +16,6 @@ public class GoGameManager : NetworkBehaviour
 
     private void Awake()
     {
-        Debug.Log(myTurn % 2);
         logic = GameObject.FindObjectOfType<Gomoku_Logic>();
         player = GameObject.FindObjectOfType<Player>();
     }
