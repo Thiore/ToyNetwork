@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
+using UnityEngine.SceneManagement;
 
 
 
@@ -27,6 +28,8 @@ public class CreateRoomBtn : MonoBehaviour
             RoomManager.instance.SetGame(GameType.text);
 
             RoomManager.instance.StartHost();
+
+            SceneManager.LoadScene(RoomManager.instance.GameplayScene);
         }
     }
 }

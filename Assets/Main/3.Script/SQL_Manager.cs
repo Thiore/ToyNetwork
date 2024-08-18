@@ -427,46 +427,46 @@ public class SQL_Manager : MonoBehaviour
     // 방을 호스팅할 때 호출되어 DB에 방 정보를 삽입
     public bool CreateRoom(string roomName, string gameType, string password)
     {
-        try
+        //try
+        //{
+        if (!connection_check(connection))
         {
-            if (!connection_check(connection))
-            {
-                return false;
-            }
-            string SQL_Command = string.Empty;
-            // 새로운 방 정보를 RoomList 테이블에 삽입
-            if (password != null)
-            {
-                SQL_Command =
-                string.Format($@"SHOW TABLE STATUS LIKE 'roomlist';
+            return false;
+        }
+        string SQL_Command = string.Empty;
+        // 새로운 방 정보를 RoomList 테이블에 삽입
+        if (password != null)
+        {
+            SQL_Command =
+            string.Format($@"SHOW TABLE STATUS LIKE 'roomlist';
                                  ALTER TABLE roomlist AUTO_INCREMENT = 1;
                                  INSERT INTO RoomList (RoomName, GameType, HostName, Password) 
-                                 VALUES('{roomName}', {gameType}, '{info.User_Name}', '{password}');");
-            }
-            else
-            {
-                SQL_Command =
-                string.Format($@"SHOW TABLE STATUS LIKE 'roomlist';
+                                 VALUES('{roomName}', '{gameType}', '{info.User_Name}', '{password}');");
+        }
+        else
+        {
+            SQL_Command =
+            string.Format($@"SHOW TABLE STATUS LIKE 'roomlist';
                                  ALTER TABLE roomlist AUTO_INCREMENT = 1;
                                  INSERT INTO RoomList (RoomName, GameType, HostName) 
-                                 VALUES('{roomName}', {gameType}, '{info.User_Name}');");
-            }
-            
-            MySqlCommand cmd = new MySqlCommand(SQL_Command, connection);
-            int count = cmd.ExecuteNonQuery();
+                                 VALUES('{roomName}', '{gameType}', '{info.User_Name}');");
+        }
 
-            if (count.Equals(1))
-            {
-                Debug.Log("Room created successfully");
-                return true;
-            }
-            return false;
-        }
-        catch (Exception e)
+        MySqlCommand cmd = new MySqlCommand(SQL_Command, connection);
+        int count = cmd.ExecuteNonQuery();
+
+        if (count >= 1)
         {
-            Debug.Log(e.Message);
-            return false;
+            Debug.Log("Room created successfully");
+            return true;
         }
+        return false;
+        //}
+        //catch (Exception e)
+        //{
+        //    Debug.Log(e.Message);
+        //    return false;
+        //}
     }
 
     public int SelectRoomID()
@@ -520,7 +520,7 @@ public class SQL_Manager : MonoBehaviour
             MySqlCommand cmd = new MySqlCommand(SQL_Command, connection);
             int count = cmd.ExecuteNonQuery();
 
-            if (count.Equals(1))
+            if (count >= 1)
             {
                 roomDic.Remove(roomID);
                 Debug.Log("Room deleted successfully");

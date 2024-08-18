@@ -1429,7 +1429,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &894378736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1509,12 +1509,13 @@ MonoBehaviour:
   minPlayers: 1
   roomPlayerPrefab: {fileID: 5329978398825054702, guid: c6b51276396cfd5458671a63ac31cc43, type: 3}
   RoomScene: Assets/Main/1.Scene/Lobby.unity
-  GameplayScene: 
+  GameplayScene: Assets/Main/1.Scene/Othello.unity
   _allPlayersReady: 0
   clientIndex: 0
-  OthelloPlayer: {fileID: 0}
+  OthelloPlayer: {fileID: 2569752773316623563, guid: d661e76c6092e72468526f0dfb5988dd, type: 3}
   GomokuPlayer: {fileID: 0}
   HitChipsPlayer: {fileID: 0}
+  ServerType: 0
 --- !u!4 &894378738
 Transform:
   m_ObjectHideFlags: 0
@@ -2385,7 +2386,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -2905,7 +2906,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -2935,7 +2936,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1737465882}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2101812847}
+        m_TargetAssemblyTypeName: CreateRoomBtn, Assembly-CSharp
+        m_MethodName: Hosting_Room
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1737465882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3476,7 +3489,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 3
+    m_Mode: 0
     m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
@@ -3562,6 +3575,7 @@ GameObject:
   - component: {fileID: 2101812845}
   - component: {fileID: 2101812844}
   - component: {fileID: 2101812846}
+  - component: {fileID: 2101812847}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -3646,6 +3660,21 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &2101812847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2101812842}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c553c8673660354458e7996272132472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GameType: {fileID: 354496331}
+  RoomName: {fileID: 75741609}
+  Password: {fileID: 101719752}
 --- !u!1 &2125674847
 GameObject:
   m_ObjectHideFlags: 0
