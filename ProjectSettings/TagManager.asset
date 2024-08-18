@@ -10,16 +10,16 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Player
   - Water
   - UI
   - Empty
   - White
   - Black
   - 
-  - 
-  - 
-  - 
+  - Tile
+  - Hover
+  - Click
   - 
   - 
   - 

@@ -9,14 +9,24 @@ public class LoginControll : MonoBehaviour
     private InputField ID_input;
     private InputField Password_input;
 
+    [SerializeField]
+    private GameObject create_panel;
+
     [SerializeField] private Text Log;
 
     private void Start()
     {
-        ID_input = GameObject.Find("ID_Input").GetComponent<InputField>();
-        Password_input = GameObject.Find("PW_Input").GetComponent<InputField>();
+        if(ID_input == null)
+            ID_input = GameObject.Find("ID_Input").GetComponent<InputField>();
+        if(Password_input == null)
+            Password_input = GameObject.Find("PW_Input").GetComponent<InputField>();
 
-        Log = GameObject.Find("Log").GetComponent<Text>();
+        ID_input.Select();
+
+        //create_panel = GameObject.Find("Account_Create");
+        //create_panel.SetActive(false);
+
+        //Log = GameObject.Find("Log").GetComponent<Text>();
     }
 
     public void Login_Btn()
@@ -27,13 +37,10 @@ public class LoginControll : MonoBehaviour
             return;
         }
 
-        if(SQL_Manager.instance.Login(ID_input.text,Password_input.text))
+        if (SQL_Manager.instance.Login(ID_input.text, Password_input.text))
         {
-            //로그인이 성공
-            User_info info = SQL_Manager.instance.info;
-            Debug.Log(info.User_ID + " | " + info.User_Name + " | " + info.User_Password);
-            gameObject.SetActive(false);
 
+            //로그인이 성공
             SceneManager.LoadScene("RoomList_Scene");
         }
         else
@@ -42,6 +49,12 @@ public class LoginControll : MonoBehaviour
             Log.text = "Check your ID or Password";
         }
     }
+
+    //public void Create_Btn()
+    //{
+    //    create_panel.SetActive(true);
+
+    //}
 
     
 

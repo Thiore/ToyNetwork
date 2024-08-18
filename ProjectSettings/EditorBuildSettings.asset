@@ -5,7 +5,19 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/CJM/1.Scene/CJMScene_Server.unity
-    guid: b1a5926feaff52e4bb82f83f6dad57a0
+    path: Assets/BSJ/1.Scene/BSJScene_Server.unity
+    guid: 7219fe85682a78c4399466e8b006b431
   m_configObjects: {}

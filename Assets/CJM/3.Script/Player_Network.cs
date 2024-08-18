@@ -32,7 +32,7 @@ public class Player_Network : NetworkBehaviour
 
     public override void OnStartAuthority()
     {
-        if(isLocalPlayer)
+        if(hasAuthority)
         {
 
         }

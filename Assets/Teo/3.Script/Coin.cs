@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class Coin : MonoBehaviour
+public class Coin : NetworkBehaviour
 {
     private Rigidbody rb;
     [SerializeField] private float Force;
@@ -11,27 +12,34 @@ public class Coin : MonoBehaviour
     private Vector3 coinUp;
     private bool isThrow;
     private PutOn puton;
+    
     private void Awake()
     {
         TryGetComponent(out rb);
         isThrow = false;
         puton = Player_1P.GetComponent<PutOn>();
+        
 
     }
    
     private void Update()
     {
-        
+        if (hasAuthority) return; //로컬플레이어만
+
         if (Input.GetKeyDown(KeyCode.Return))
         {
             Debug.Log(transform.up);
-            rb.AddForce(Vector3.up * Force, ForceMode.Impulse);
-            float rand = Random.Range(0, 1f);
-            rb.angularDrag = rand;
-            rb.angularVelocity = Vector3.left * 50f;
-            
-            
+            //rb.AddForce(Vector3.up * Force, ForceMode.Impulse);
+            //float rand = Random.Range(0, 1f);
+            //rb.angularDrag = rand;
+            //rb.angularVelocity = Vector3.left * 50f;
+
+            Debug.Log(transform.up);
+            CmdBounceCoin();
+
+
         }
+        
         if (isThrow)
             return;
         if (coinUp != Vector3.zero && !isThrow)
@@ -40,17 +48,18 @@ public class Coin : MonoBehaviour
 
             if (dotProduct > 0)
             {
-                
-                Debug.Log("화이트");
+
+                //Debug.Log("화이트");
+                //Invoke("SetPlayerType(White)", 3f);
                 SetPlayerType("White");
 
             }
             else if (dotProduct < 0)
             {
-                
-                Debug.Log("블랙");
-                SetPlayerType("Black");
 
+                //Debug.Log("블랙");
+                //Invoke("SetPlayerType(Black)", 3f);
+                SetPlayerType("Black");
             }
             else
             {
@@ -59,6 +68,22 @@ public class Coin : MonoBehaviour
         }
         
     
+    }
+    [Command]  // 클라이언트에서 서버로 명령을 보내는 메서드
+    private void CmdBounceCoin()
+    {
+        Debug.Log("CmdBounceCoin() 호출됨");
+        RpcCoin();  // 모든 클라이언트에서 코인에 힘을 가하는 RPC 호출
+    }
+
+    [ClientRpc]
+    private void RpcCoin()
+    {
+        Debug.Log("RpcCoin() 호출됨");
+        rb.AddForce(Vector3.up * Force, ForceMode.Impulse);
+        float rand = Random.Range(0, 1f);
+        rb.angularDrag = rand;
+        rb.angularVelocity = Vector3.left * 50f;
     }
 
     private void OnCollisionExit(Collision collision)
@@ -97,15 +122,21 @@ public class Coin : MonoBehaviour
     {
         if (type == "Black")
         {
-            puton.isGameStart = true; 
-            
-            
+            puton.isGameStart = true;
+            Invoke("Coin_False", 3f);
+
+
         }
         else if (type == "White")
         {
-            puton.isGameStart = false; 
-            
+            puton.isGameStart = true;
+            Invoke("Coin_False", 3f);
         }
+    }
+
+    private void Coin_False()
+    {
+        gameObject.SetActive(false);
     }
 
 }

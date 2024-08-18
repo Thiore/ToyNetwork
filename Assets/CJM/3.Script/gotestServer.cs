@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public enum Type
+public enum eType
 {
     Server = 0,
     Client
@@ -11,14 +11,14 @@ public enum Type
 
 public class gotestServer : MonoBehaviour
 {
-    public Type type;
+    public eType type;
 
     private NetworkManager manager;
 
     private void Start()
     {
         manager = GetComponent<NetworkManager>();
-        if (type.Equals(Type.Server))
+        if (type.Equals(eType.Server))
         {
             Start_Server();
         }
