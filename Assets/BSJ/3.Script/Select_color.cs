@@ -14,7 +14,14 @@ public class Select_color : NetworkBehaviour
     public Material chipWhite;
     public GameObject chipPrefab;
     private Renderer chipRenderer;
-
+    public override void OnStartAuthority()
+    {
+        if (hasAuthority)
+        {
+            Debug.Log("Select_color OnStartAuthority µé¾î¿È");
+            //CmdSpawnCoin();
+        }
+    }
     private void Start()
     {
         Debug.Log($"Start - PlayerType: {playerType}, isLocalPlayer: {hasAuthority}");
