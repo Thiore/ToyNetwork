@@ -65,7 +65,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 449b797cdaa26a849a0325e3ea1aa401, type: 2}
+  - {fileID: 2100000, guid: 83540389fcd4e774e862adcd9a82366e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -132,7 +132,6 @@ MonoBehaviour:
   forceMultiplier: 18
   circleSegments: 100
   maxRadius: 3
-  lb: {fileID: 9082175064443270041, guid: 0df61723f7d8964448205721348d13e8, type: 3}
 --- !u!120 &6493871588589372920
 LineRenderer:
   m_ObjectHideFlags: 0
