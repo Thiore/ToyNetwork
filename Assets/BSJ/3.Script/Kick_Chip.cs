@@ -39,6 +39,7 @@ public class Kick_Chip : MonoBehaviour
  
     void Update()
     {
+
         if (Input.GetMouseButtonDown(0))
         {
             
@@ -54,6 +55,7 @@ public class Kick_Chip : MonoBehaviour
             //bb.transform.position = hitt.point;
             if (Physics.Raycast(ray, out RaycastHit hit) && hit.collider.gameObject == gameObject)
             {
+                Debug.Log("이거 들어오나");
                 // 마우스를 클릭했을 때
                 //수정
                 startPoint = new Vector3(hit.point.x, 0.2f, hit.point.z);

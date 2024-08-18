@@ -14,7 +14,7 @@ public class CameraMove : NetworkBehaviour
         Center = GameObject.Find("go_game_board_0")?.transform;
         if (Center == null)
         {
-            Debug.LogError("Center GameObject not found. Please ensure 'go_game_board_0' exists in the scene.");
+            Debug.LogError("서버에서 바둑판 못찾음");
         }
 
         if (!hasAuthority)

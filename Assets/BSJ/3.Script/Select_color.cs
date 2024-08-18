@@ -24,6 +24,7 @@ public class Select_color : NetworkBehaviour
             // 로컬 플레이어의 정보나 PlayerType을 설정
             CmdSetPlayerType(PlayerType.White); // 예시로 White로 설정
         }
+        
 
         chipRenderer = chipPrefab.GetComponent<Renderer>();
         SetPlayerLayer();
