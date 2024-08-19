@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 7031847197843535528}
   - component: {fileID: -4052019896028274899}
   - component: {fileID: 7463410702276037759}
+  - component: {fileID: -5833075097196421268}
   m_Layer: 3
   m_Name: Main Camera_test
   m_TagString: Player
@@ -151,6 +152,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84d6e50bd6f674e4ba87b54ca222e6bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   LB: {fileID: 6703591084508991862, guid: 29664475c54680a449077da2960c20ca, type: 3}
   RT: {fileID: 4677849740204339680, guid: 51f459538f458e84d97ba5989409dc2e, type: 3}
   Chip_Prefabs: {fileID: 8242623377463246510, guid: 823bf64b084598c498d82bad9ed4ff23, type: 3}
@@ -166,10 +170,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84e4519850451b542be2f99a0a16f080, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerType: 0
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  playerType: 1
   chipBlack: {fileID: 2100000, guid: 449b797cdaa26a849a0325e3ea1aa401, type: 2}
   chipWhite: {fileID: 2100000, guid: 83540389fcd4e774e862adcd9a82366e, type: 2}
   chipPrefab: {fileID: 8242623377463246510, guid: 823bf64b084598c498d82bad9ed4ff23, type: 3}
+  chipRenderer: {fileID: 7268351488787316038, guid: 823bf64b084598c498d82bad9ed4ff23, type: 3}
 --- !u!114 &7031847197843535528
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,3 +246,49 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   coinPrefab: {fileID: 6545285056633645601, guid: f09fc9e6dc59ae94fa36f7d4d8a7546b, type: 3}
+--- !u!114 &-5833075097196421268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4040268029124843613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 815b7889f317c3340bcb52fbcf20da23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dontDestroyOnLoad: 1
+  runInBackground: 1
+  headlessStartMode: 1
+  editorAutoStart: 0
+  sendRate: 60
+  autoStartServerBuild: 0
+  autoConnectClientBuild: 0
+  offlineScene: 
+  onlineScene: 
+  transport: {fileID: 0}
+  networkAddress: localhost
+  maxConnections: 100
+  disconnectInactiveConnections: 0
+  disconnectInactiveTimeout: 60
+  authenticator: {fileID: 0}
+  playerPrefab: {fileID: 4040268029124843613}
+  autoCreatePlayer: 1
+  playerSpawnMethod: 0
+  spawnPrefabs: []
+  exceptionsDisconnect: 1
+  snapshotSettings:
+    bufferTimeMultiplier: 2
+    bufferLimit: 32
+    catchupNegativeThreshold: -1
+    catchupPositiveThreshold: 1
+    catchupSpeed: 0.019999999552965164
+    slowdownSpeed: 0.03999999910593033
+    driftEmaDuration: 1
+    dynamicAdjustment: 1
+    dynamicAdjustmentTolerance: 1
+    deliveryTimeEmaDuration: 2
+  evaluationMethod: 0
+  evaluationInterval: 3
+  timeInterpolationGui: 0
