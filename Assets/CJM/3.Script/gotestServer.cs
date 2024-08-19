@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
-using Mono.CecilX;
 
 public enum eType
 {
@@ -15,7 +14,6 @@ public class gotestServer : MonoBehaviour
     public eType type;
 
     private NetworkManager manager;
-    private GameObject board;
 
     private void Start()
     {
@@ -48,16 +46,9 @@ public class gotestServer : MonoBehaviour
             NetworkServer.OnDisconnectedEvent += (NetworkConnectionToClient) => { Debug.Log($"Client DisConnect : {NetworkConnectionToClient.address}"); };
 
             BoardGO();
-            NetworkServer.Spawn(this.board);
+
         }
     }
-
-    public void NetworkTest(NetworkConnection conn)
-    {
-        NetworkServer.Spawn(board.gameObject, conn);
-    }
-
-
 
     public void BoardGO()
     {
@@ -65,11 +56,7 @@ public class gotestServer : MonoBehaviour
         var board = Instantiate(boardfab).transform.GetComponent<Board>();
         var iden = board.GetComponent<NetworkIdentity>();
         NetworkServer.Spawn(board.gameObject, iden.connectionToClient);
-        board.InitBoard();
-        this.board = board.gameObject;
-        NetworkConnectionToClient f;
-        f.identity
-       
+        board.InitBoard();    
     }
 
     public void Start_Client()

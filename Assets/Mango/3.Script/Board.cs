@@ -5,13 +5,10 @@ using UnityEngine;
 
 public class Board : NetworkBehaviour
 {
+    public int Turn = 1;
 
     [SerializeField] private GameObject Chip_Pivot;
     [SerializeField] private GameObject chipPrefab;
-
-    List<GameObject> chipList;
-
-    private Vector3 initChippos;
 
     private void Awake()
     {
@@ -38,6 +35,7 @@ public class Board : NetworkBehaviour
     {
         GameObject chipobj = Instantiate(chipPrefab) as GameObject;
         chipobj.transform.SetParent(this.gameObject.transform);
+        Chip_Pivot.transform.GetChild(index).gameObject.AddComponent<NetworkIdentity>();
         chipobj.transform.position = Chip_Pivot.transform.GetChild(index).position;
         NetworkIdentity net = chipobj.transform.GetComponent<NetworkIdentity>();
         NetworkServer.Spawn(chipobj, net.connectionToClient);
