@@ -7,7 +7,7 @@ public enum PlayerType { Black, White }
 
 public class Select_color : NetworkBehaviour
 {
-
+    private NetworkManager manager_BSJ;
     public PlayerType playerType;
 
     public Material chipBlack;
@@ -20,12 +20,13 @@ public class Select_color : NetworkBehaviour
 
     private void Start()
     {
+        manager_BSJ = GetComponent<NetworkManager>();
         //if (chipPrefab == null)
         //{
         //    Debug.LogError("chipPrefab이 할당되지 않았습니다!");
         //    return;
         //}
-        
+
         //if (chipRenderer == null)
         //{
         //    Debug.LogError("chipPrefab에서 Renderer 컴포넌트를 찾을 수 없습니다!");
@@ -34,6 +35,7 @@ public class Select_color : NetworkBehaviour
         chipRenderer = chipPrefab.GetComponent<Renderer>();
         if (isServer)
         {
+            
             AssignPlayerType();
 
         }
@@ -63,6 +65,7 @@ public class Select_color : NetworkBehaviour
     [Server]
     private void AssignPlayerType()
     {
+        
         //첫 번째 플레이어는 흰색, 두 번째 플레이어는 검은색
         if (playerCount % 2 == 0)
         {
@@ -81,7 +84,7 @@ public class Select_color : NetworkBehaviour
     [Command]
     private void CmdSetPlayerType(PlayerType type)
     {
-        Debug.Log($"권한 확인 - hasAuthority: {hasAuthority}");
+        Debug.Log($"권한 확인 - hasAuthority: {isLocalPlayer}");
         Debug.Log("CmdSetPlayerType 호출됨. 타입: " + type);
         playerType = type;
         RpcUpdatePlayerType(type);

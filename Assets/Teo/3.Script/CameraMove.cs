@@ -17,7 +17,7 @@ public class CameraMove : NetworkBehaviour
             Debug.LogError("서버에서 바둑판 못찾음");
         }
 
-        if (!hasAuthority)
+        if (!isLocalPlayer)
         {
             mainCamera = GameObject.Find("Camera").GetComponent<Camera>();
 
@@ -42,7 +42,7 @@ public class CameraMove : NetworkBehaviour
 
     private void Update()
     {
-        if (!hasAuthority) return;
+        if (!isLocalPlayer) return;
 
         float scroll = Input.GetAxisRaw("Mouse ScrollWheel");
         float vertical = Input.GetAxisRaw("Vertical");
@@ -54,7 +54,7 @@ public class CameraMove : NetworkBehaviour
 
     private void LateUpdate()
     {
-        if (!hasAuthority) return;
+        if (!isLocalPlayer) return;
 
         // ī�޶� ��ġ�� ȸ���� ����ȭ
         if (mainCamera != null)

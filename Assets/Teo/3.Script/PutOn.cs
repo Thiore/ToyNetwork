@@ -35,7 +35,7 @@ public class PutOn : NetworkBehaviour
 
     private void Update()
     {
-        if (isGameStart || !hasAuthority) // 권한이 있는 로컬 플레이어만 수행
+        if (isGameStart || !isLocalPlayer) // 권한이 있는 로컬 플레이어만 수행
         {
             //Debug.Log("마우스 권한 들어옴");
             return;

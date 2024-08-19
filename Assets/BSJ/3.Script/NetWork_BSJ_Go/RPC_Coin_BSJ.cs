@@ -11,7 +11,7 @@ public class RPC_Coin_BSJ : NetworkBehaviour
     // Client가 Server에 Connect 되었을 때 콜백 함수
     public override void OnStartAuthority()
     {
-        if (hasAuthority)
+        if (isLocalPlayer)
         {
             Debug.Log("OnStartAuthority 들어옴");
             //CmdSpawnCoin();
@@ -21,7 +21,7 @@ public class RPC_Coin_BSJ : NetworkBehaviour
     private void Update()
     {
         // 스페이스바를 눌렀을 때 코인 생성
-        if (hasAuthority && Input.GetKeyDown(KeyCode.Space))
+        if (isLocalPlayer && Input.GetKeyDown(KeyCode.Space))
         {
             CmdSpawnCoin();
         }
