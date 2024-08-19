@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class Board : NetworkBehaviour
 {
-    public int Turn = 1;
 
     [SerializeField] private GameObject Chip_Pivot;
     [SerializeField] private GameObject chipPrefab;
@@ -52,5 +51,7 @@ public class Board : NetworkBehaviour
     {
         obj.transform.SetParent(pre);
     }
+
+
 
 }

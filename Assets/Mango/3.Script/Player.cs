@@ -14,27 +14,24 @@ public class Player : NetworkBehaviour
         Black
     }
 
+    [SyncVar]
+    public int MyNumber = 0;
+    public void MyNumberGet(int num)
+    {
+        MyNumber = num;
+    }
+
     private int myColor = 0;
     public int MyColor { get { return myColor; } }
     //0Èæ 1¹é
     [SerializeField] private Material[] chip_material;
     // false Èæ true ¹é 
-    private bool myTurn = true;
+    private bool myTurn = false;
     public bool Myturn { get => myTurn; }
 
     [SerializeField] private Gomoku_Logic logic;
     [SerializeField] private Board board;
     private GoGameManager myGameManager;
-
-
-    public override void OnStartLocalPlayer()
-    {
-        base.OnStartLocalPlayer();
-
-        board.Turn++;
-        Debug.Log(board.Turn);
-    }
-
 
 
     private void Awake()
@@ -48,6 +45,8 @@ public class Player : NetworkBehaviour
     private void Update()
     {
         if (!isLocalPlayer) return;
+
+        Debug.Log(MyNumber);
 
         if (Input.GetMouseButtonUp(0) && logic.result_Panel.activeSelf.Equals(false))
         {
@@ -102,6 +101,8 @@ public class Player : NetworkBehaviour
     {
         myTurn = !myTurn;
     }
+
+
 
 
 
