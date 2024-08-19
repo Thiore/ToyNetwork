@@ -2,7 +2,6 @@ using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -41,7 +40,6 @@ public class Player : NetworkBehaviour
     }
 
 
-
     private void Update()
     {
 
@@ -68,25 +66,26 @@ public class Player : NetworkBehaviour
         return myColor;
     }
 
-    [ClientRpc]
+    [Command]
     private void CmdPutChip(Chip chip)
     {
-
+        CmdRequestClientAuthority();
         Debug.Log("cmd command");
         RPCDrawBoard(chip);
     }
 
-    [Command]
+    [ClientRpc]
     private void RPCDrawBoard(Chip chip)
     {
         Debug.Log(":rpc");
-        chip.MeshrenderGet.enabled = true;
-        chip.MeshrenderGet.material = myTurn ? chip_material[0] : chip_material[1];
-        logic.AddChip(chip, this);
-        Debug.Log(NetworkServer.active);
-
-        TurnChange();
-
+        if(chip.IsPut == false)
+        {
+            chip.IsPut = true;
+            chip.MeshrenderGet.enabled = true;
+            chip.MeshrenderGet.material = myTurn ? chip_material[0] : chip_material[1];
+            logic.AddChip(chip, this);
+            TurnChange();
+        }
     }
 
 

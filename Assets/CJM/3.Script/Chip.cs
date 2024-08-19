@@ -7,6 +7,7 @@ using UnityEngine;
 public class Chip : NetworkBehaviour
 {
     //Chip 자체는 동작하지 않고 반투명한 돌만 나오게끔 할 예정 
+    [SyncVar]
     private bool isPut = false;
     public bool IsPut { get => isPut; set => isPut = value; }
     [SerializeField] private Gomoku_Logic logic;

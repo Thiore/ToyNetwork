@@ -19,7 +19,7 @@ public class Board : NetworkBehaviour
         chipPrefab = Resources.Load("Prefabs/GoGame_Chip") as GameObject;
     }
 
-    [ClientRpc]
+
     public void InitBoard()
     {
         int index = 0;
@@ -31,12 +31,13 @@ public class Board : NetworkBehaviour
                 index++;
             }
         }
+
     }
 
     public void Createchip(int index, int j, int i)
     {
         GameObject chipobj = Instantiate(chipPrefab) as GameObject;
-        chipobj.transform.SetParent(Chip_Pivot.transform.GetChild(index));
+        chipobj.transform.SetParent(this.gameObject.transform);
         chipobj.transform.position = Chip_Pivot.transform.GetChild(index).position;
         NetworkIdentity net = chipobj.transform.GetComponent<NetworkIdentity>();
         NetworkServer.Spawn(chipobj, net.connectionToClient);
@@ -48,6 +49,7 @@ public class Board : NetworkBehaviour
         }
     }
 
+    [ClientRpc]
     public void RPCSetPre(GameObject obj, Transform pre)
     {
         obj.transform.SetParent(pre);
