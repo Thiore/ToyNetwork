@@ -12,14 +12,17 @@ public class PutOn : NetworkBehaviour
     [SerializeField] private GameObject Chip_Prefabs;
     private int SetCount = 5;
     private Queue<GameObject> Chip_Queue = new Queue<GameObject>();
+    public GameObject[] Chip_Array;
+    private int Chip_Num = 0;
     public bool isGameStart { get; set; }
 
     private Select_color select_Color;
     private Camera cam;
+    public bool isthis;
 
     private void Start()
     {
-        cam = GameObject.Find("Camera").GetComponent<Camera>();
+        Chip_Array = new GameObject[SetCount];
         select_Color = GetComponent<Select_color>();
 
         for (int i = 0; i < SetCount; i++)
@@ -27,25 +30,31 @@ public class PutOn : NetworkBehaviour
             GameObject obj = Instantiate(select_Color.chipPrefab);
             obj.SetActive(false);
             obj.GetComponent<Kick_Chip>().SetPutOn(this);
-            Chip_Queue.Enqueue(obj);
+            Chip_Array[i] = obj;
+            //Chip_Queue.Enqueue(obj);
         }
-
         startTime = 0f;
+        if (!isLocalPlayer) return;
+        cam = GetComponent<Camera>();
     }
 
     private void Update()
     {
-        if (isGameStart || !isLocalPlayer) // 권한이 있는 로컬 플레이어만 수행
-        {
-            //Debug.Log("마우스 권한 들어옴");
-            return;
-        }
+        //if (isGameStart || isLocalPlayer) // 권한이 있는 로컬 플레이어만 수행
+        //{
+        //    //Debug.Log("마우스 권한 들어옴");
+        //    return;
+        //}
+        if (!isLocalPlayer) return;
+        isthis = isLocalPlayer;
         //Debug.Log("Put on Update 들어옴");
         if (startTime < setTime)
         {
             startTime += Time.deltaTime;
-            if (Chip_Queue.Count > 0)
-            {
+            //if (Chip_Queue.Count > 0)
+            //{
+            if(!Chip_Num.Equals(SetCount))
+            { 
                 if (Input.GetMouseButtonDown(0))
                 {
                     Debug.Log("마우스 버튼 눌림");
@@ -54,8 +63,10 @@ public class PutOn : NetworkBehaviour
                     {
                         if (hit.point.x > LB.position.x && hit.point.x < RT.position.x && hit.point.z > LB.position.z && hit.point.z < RT.position.z && !hit.collider.CompareTag("Chip"))
                         {
+                            Debug.Log("생성요청하기");
                             // 서버에서 바둑알 생성 요청
                             CmdPlaceChip(hit.point);
+                            //hit.transform.GetComponent<Kick_Chip>().ismine = true;
                         }
                     }
                 }
@@ -75,20 +86,56 @@ public class PutOn : NetworkBehaviour
     [ClientRpc]
     private void RpcPlaceChip(Vector3 position)
     {
-        if (Chip_Queue.Count > 0)
+        Debug.Log("여기까진 들어옴");
+        //if (Chip_Queue.Count > 0)
+        if (!Chip_Num.Equals(SetCount))
         {
-            GameObject obj = Chip_Queue.Dequeue();
+            Debug.Log("들어왔니?");
+            //GameObject obj = Chip_Queue.Dequeue();
+            GameObject obj = Chip_Array[Chip_Num];
+            Chip_Num++;
             obj.transform.position = position;
             obj.SetActive(true);
+            if (isLocalPlayer)
+            {
+                
+                obj.GetComponent<Kick_Chip>().ismine = true;
+                
+            }
+            
         }
     }
+    [Command]
+    public void CmdKickEgg(int num, Vector3 force)
+    {
+        RpcKickEgg(num, force);
 
+
+    }
+    [ClientRpc]
+    public void RpcKickEgg(int num, Vector3 force)
+    {
+        Chip_Array[num].GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
+        //// `Chip_Prefabs`의 위치와 회전을 동기화
+        //Chip_Prefabs.transform.position = position;
+        //Chip_Prefabs.transform.rotation = rotation;
+        Debug.Log("RpcKickEgg() 호출됨");
+        
+    }
+
+    //[ClientRpc]
+    //private void RPCEgg()
+    //{
+    //    Debug.Log("RPCEgg() 호출됨");
+
+    //}
     public void Die(GameObject obj)
     {
         obj.SetActive(false);
-        Chip_Queue.Enqueue(obj);
-        Debug.Log(Chip_Queue.Count);
-        if (Chip_Queue.Count.Equals(SetCount))
+        Chip_Num--;
+        //Chip_Queue.Enqueue(obj);
+        //Debug.Log(Chip_Queue.Count);
+        if (Chip_Num.Equals(0))
         {
             Debug.Log("Lose");
         }

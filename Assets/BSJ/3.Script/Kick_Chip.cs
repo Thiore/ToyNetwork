@@ -1,6 +1,7 @@
 using UnityEngine;
+using Mirror;
 
-public class Kick_Chip : MonoBehaviour
+public class Kick_Chip : NetworkBehaviour
 {
     private Rigidbody rb;
     private Vector3 startPoint;
@@ -15,16 +16,18 @@ public class Kick_Chip : MonoBehaviour
     private Camera cam;
     //[SerializeField] private GameObject lb;
     private PutOn putOn_Player;
-
+    private RPC_GO_BSJ rpc_go_bsj;
+    public bool ismine = false;
     private void OnEnable()
     {
         isDie = false;
     }
-
+    
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         
+
         // LineRenderer 설정
         lineRenderer = gameObject.GetComponent<LineRenderer>();
         lineRenderer.startWidth = 0.05f;
@@ -35,11 +38,28 @@ public class Kick_Chip : MonoBehaviour
         lineRenderer.positionCount = circleSegments + 2; // 원을 그리기 위해 필요한 점의 수
         lineRenderer.useWorldSpace = false; // 로컬 좌표를 사용
         lineRenderer.enabled = false; // 드래그할 때만 보이게 설정
+
+        rpc_go_bsj = GetComponent<RPC_GO_BSJ>();
+        
+        // 클라이언트 권한 부여를 서버에서 처리할 수 있도록 함
+        if (!isServer)
+        {
+            // 권한을 부여할 필요가 있을 때 서버에서 클라이언트 권한을 부여합니다.
+            // 이 부분은 실제 게임 로직에 맞게 조정 필요
+            foreach (var conn in NetworkServer.connections.Values)
+            {
+                // 특정 오브젝트에 권한을 부여할 클라이언트를 찾는 로직
+                // 예를 들어, 플레이어가 특정 오브젝트와 상호작용할 때
+                var identity = GetComponent<NetworkIdentity>();
+                identity.AssignClientAuthority(conn);
+            }
+        }
     }
  
     void Update()
     {
-
+        if (!putOn_Player.isLocalPlayer) return;
+        //GameObject ismine_ob;
         if (Input.GetMouseButtonDown(0))
         {
             
@@ -52,12 +72,13 @@ public class Kick_Chip : MonoBehaviour
             Ray ray =cam.ScreenPointToRay(Input.mousePosition);
             //GameObject bb = Instantiate(lb);
             Physics.Raycast(ray, out RaycastHit hitt);
-            //bb.transform.position = hitt.point;
+           // bb.transform.position = hitt.point;
             if (Physics.Raycast(ray, out RaycastHit hit) && hit.collider.gameObject == gameObject)
             {
                 Debug.Log("이거 들어오나");
                 // 마우스를 클릭했을 때
                 //수정
+                //ismine_ob = hit.collider.gameObject;
                 startPoint = new Vector3(hit.point.x, 0.2f, hit.point.z);
                 //Debug.Log(startPoint);
                 isDragging = true;
@@ -99,7 +120,34 @@ public class Kick_Chip : MonoBehaviour
 
             // 마우스를 당긴 반대 방향으로 힘 적용
             Vector3 forceDirection = endPoint - startPoint;
-            rb.AddForce(-forceDirection.normalized * forceMultiplier * currentRadius, ForceMode.Impulse);
+            //rb.AddForce(-forceDirection.normalized * forceMultiplier * currentRadius, ForceMode.Impulse);
+            Vector3 force = -forceDirection.normalized * forceMultiplier * currentRadius;
+
+            // 위치와 회전을 서버에 동기화 요청
+            //if (isLocalPlayer)
+            if (putOn_Player.isLocalPlayer)//
+            {
+                int num;
+                for(int i = 0; i < putOn_Player.Chip_Array.Length;i++)
+                {
+                    if (putOn_Player.Chip_Array[i] != gameObject)
+                        continue;
+                    else
+                    {
+                        num = i;
+                        putOn_Player.CmdKickEgg(num, force);
+                        break;
+                    }
+                }
+                //if (isLocalPlayer)
+                
+
+            }
+            else
+            {
+                Debug.Log("CmdKickEgg의 권한 없음");
+                //CmdKickEgg();
+            }
         }
     }
     public void SetPutOn(PutOn put)
@@ -142,4 +190,7 @@ public class Kick_Chip : MonoBehaviour
 
         putOn_Player.Die(gameObject);
     }
+
+   
+
 }

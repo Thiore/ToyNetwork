@@ -18,7 +18,6 @@ GameObject:
   - component: {fileID: 7031847197843535528}
   - component: {fileID: -4052019896028274899}
   - component: {fileID: 7463410702276037759}
-  - component: {fileID: -5833075097196421268}
   m_Layer: 3
   m_Name: Main Camera_test
   m_TagString: Player
@@ -158,6 +157,7 @@ MonoBehaviour:
   LB: {fileID: 6703591084508991862, guid: 29664475c54680a449077da2960c20ca, type: 3}
   RT: {fileID: 4677849740204339680, guid: 51f459538f458e84d97ba5989409dc2e, type: 3}
   Chip_Prefabs: {fileID: 8242623377463246510, guid: 823bf64b084598c498d82bad9ed4ff23, type: 3}
+  isthis: 0
 --- !u!114 &4040268029124843586
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -246,49 +246,3 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   coinPrefab: {fileID: 6545285056633645601, guid: f09fc9e6dc59ae94fa36f7d4d8a7546b, type: 3}
---- !u!114 &-5833075097196421268
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4040268029124843613}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 815b7889f317c3340bcb52fbcf20da23, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dontDestroyOnLoad: 1
-  runInBackground: 1
-  headlessStartMode: 1
-  editorAutoStart: 0
-  sendRate: 60
-  autoStartServerBuild: 0
-  autoConnectClientBuild: 0
-  offlineScene: 
-  onlineScene: 
-  transport: {fileID: 0}
-  networkAddress: localhost
-  maxConnections: 100
-  disconnectInactiveConnections: 0
-  disconnectInactiveTimeout: 60
-  authenticator: {fileID: 0}
-  playerPrefab: {fileID: 4040268029124843613}
-  autoCreatePlayer: 1
-  playerSpawnMethod: 0
-  spawnPrefabs: []
-  exceptionsDisconnect: 1
-  snapshotSettings:
-    bufferTimeMultiplier: 2
-    bufferLimit: 32
-    catchupNegativeThreshold: -1
-    catchupPositiveThreshold: 1
-    catchupSpeed: 0.019999999552965164
-    slowdownSpeed: 0.03999999910593033
-    driftEmaDuration: 1
-    dynamicAdjustment: 1
-    dynamicAdjustmentTolerance: 1
-    deliveryTimeEmaDuration: 2
-  evaluationMethod: 0
-  evaluationInterval: 3
-  timeInterpolationGui: 0

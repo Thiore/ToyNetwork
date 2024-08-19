@@ -9,25 +9,32 @@ public class CameraMove : NetworkBehaviour
     private Transform Center;
     private Camera mainCamera;
 
-    private void Awake()
+    //private void Awake()
+    //{
+       
+
+        
+    //}
+    private void Start()
     {
-        Center = GameObject.Find("go_game_board_0")?.transform;
-        if (Center == null)
+        if (isLocalPlayer)
         {
-            Debug.LogError("서버에서 바둑판 못찾음");
-        }
-
-        if (!isLocalPlayer)
-        {
-            mainCamera = GameObject.Find("Camera").GetComponent<Camera>();
-
+            mainCamera = GetComponent<Camera>();
+            Center = GameObject.Find("go_game_board_0")?.transform;
+            if (Center == null)
+            {
+                Debug.LogError("서버에서 바둑판 못찾음");
+            }
             //if (mainCamera != null)
             //{
             //    mainCamera.gameObject.SetActive(true);
             //}
         }
+        else
+        {
+            GetComponent<Camera>().enabled = false;
+        }
     }
-
     //private void Start()
     //{
     //    if (isLocalPlayer)

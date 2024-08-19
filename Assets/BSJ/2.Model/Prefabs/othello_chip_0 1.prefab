@@ -16,7 +16,6 @@ GameObject:
   - component: {fileID: 6545285056633645600}
   - component: {fileID: -3254014476021480069}
   - component: {fileID: 4981291095660418137}
-  - component: {fileID: -8802493022225511182}
   m_Layer: 0
   m_Name: othello_chip_0 1
   m_TagString: Untagged
@@ -187,22 +186,6 @@ MonoBehaviour:
   positionSensitivity: 0.01
   rotationSensitivity: 0.01
   scaleSensitivity: 0.01
---- !u!114 &-8802493022225511182
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6545285056633645601}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62819facc78e0ef44956365c4e072d21, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  coinPrefab: {fileID: 6545285056633645601}
 --- !u!1 &6714495334486463007
 GameObject:
   m_ObjectHideFlags: 0

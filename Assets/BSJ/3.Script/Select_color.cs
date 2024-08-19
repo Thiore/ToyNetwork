@@ -7,7 +7,7 @@ public enum PlayerType { Black, White }
 
 public class Select_color : NetworkBehaviour
 {
-    private NetworkManager manager_BSJ;
+    
     public PlayerType playerType;
 
     public Material chipBlack;
@@ -20,7 +20,7 @@ public class Select_color : NetworkBehaviour
 
     private void Start()
     {
-        manager_BSJ = GetComponent<NetworkManager>();
+        
         //if (chipPrefab == null)
         //{
         //    Debug.LogError("chipPrefab이 할당되지 않았습니다!");
@@ -39,10 +39,10 @@ public class Select_color : NetworkBehaviour
             AssignPlayerType();
 
         }
-        //else
-        //{
-        //    OnPlayerTypeChanged(playerType);
-        //}
+        else
+        {
+            OnPlayerTypeChanged(playerType);
+        }
 
         //Debug.Log($"Start - PlayerType: {playerType}, isLocalPlayer: {hasAuthority}");
         // 오브젝트가 권한을 가지고 있는지 확인
