@@ -124,7 +124,7 @@ public class Player : NetworkBehaviour
 
     public void AssignClientAuthority(NetworkIdentity networkIdentity, NetworkConnectionToClient conn)
     {
-        if (networkIdentity != null && !hasAuthority) 
+        if (networkIdentity != null && !isLocalPlayer) 
         {
             networkIdentity.AssignClientAuthority(conn);
         }

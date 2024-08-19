@@ -24,7 +24,7 @@ public class Coin : NetworkBehaviour
    
     private void Update()
     {
-        if (hasAuthority) return; //로컬플레이어만
+        if (isLocalPlayer) return; //로컬플레이어만
 
         if (Input.GetKeyDown(KeyCode.Return))
         {

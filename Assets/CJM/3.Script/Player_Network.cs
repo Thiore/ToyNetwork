@@ -30,15 +30,7 @@ public class Player_Network : NetworkBehaviour
 
     private static event Action<Player_Network> onChip;
 
-    public override void OnStartAuthority()
-    {
-        if(hasAuthority)
-        {
-
-        }
-
- 
-    }
+    
 
 
     private void Awake()

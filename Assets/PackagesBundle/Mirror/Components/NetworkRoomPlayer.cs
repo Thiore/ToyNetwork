@@ -171,7 +171,7 @@ namespace Mirror
 
         void DrawPlayerReadyButton()
         {
-            if (NetworkClient.active && hasAuthority)
+            if (NetworkClient.active && isLocalPlayer)
             {
                 GUILayout.BeginArea(new Rect(20f, 300f, 120f, 20f));
 

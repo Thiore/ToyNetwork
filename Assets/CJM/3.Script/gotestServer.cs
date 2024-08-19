@@ -67,8 +67,6 @@ public class gotestServer : MonoBehaviour
         NetworkServer.Spawn(board.gameObject, iden.connectionToClient);
         board.InitBoard();
         this.board = board.gameObject;
-        NetworkConnectionToClient f;
-        f.identity
        
     }
 

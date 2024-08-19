@@ -220,12 +220,12 @@ namespace Mirror
         void Update()
         {
             if (isServer)      UpdateServer();
-            if (hasAuthority) UpdateClient();
+            if (isLocalPlayer) UpdateClient();
         }
 
         void OnGUI()
         {
-            if (!hasAuthority) return;
+            if (!isLocalPlayer) return;
             if (!showGui) return;
 
             windowRect = GUILayout.Window(0, windowRect, OnWindow, "Remote Statistics");
