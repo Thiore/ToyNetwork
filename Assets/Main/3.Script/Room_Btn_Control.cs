@@ -31,14 +31,14 @@ public class Room_Btn_Control : MonoBehaviour
     
 
     //roomID를 매개변수로 받아옴 받아올 방법 생각 필요
-    public void Join_Room()
-    {
-        RoomManager.instance.networkAddress = roomInfo.Room_ID.ToString();
-        RoomManager.instance.SetGame(roomInfo.Game_Type);
+    //public void Join_Room()
+    //{
+    //    //RoomManager.instance.networkAddress = roomInfo.Room_ID.ToString();
+    //    RoomManager.instance.SetGame(roomInfo.Room_ID.ToString());
 
-        SQL_Manager.instance.UpdateRoomPlayerCount(roomInfo.Room_ID, 2);
+    //    SQL_Manager.instance.UpdateRoomPlayerCount(roomInfo.Room_ID, 2);
 
-        RoomManager.instance.StartClient();
-        // 네트워크 연결 설정
-    }
+    //    RoomManager.instance.StartClient();
+    //    // 네트워크 연결 설정
+    //}
 }

@@ -427,9 +427,9 @@ public class SQL_Manager : MonoBehaviour
     // 방을 호스팅할 때 호출되어 DB에 방 정보를 삽입
     public bool CreateRoom(string roomName, string gameType, string password)
     {
-        //try
-        //{
-        if (!connection_check(connection))
+        try
+        {
+            if (!connection_check(connection))
         {
             return false;
         }
@@ -461,12 +461,12 @@ public class SQL_Manager : MonoBehaviour
             return true;
         }
         return false;
-        //}
-        //catch (Exception e)
-        //{
-        //    Debug.Log(e.Message);
-        //    return false;
-        //}
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.Message);
+            return false;
+        }
     }
 
     public int SelectRoomID()
@@ -561,7 +561,7 @@ public class SQL_Manager : MonoBehaviour
                     string roomName = (reader.IsDBNull(1)) ? string.Empty : (string)reader["RoomName"];
                     string gameType = (reader.IsDBNull(2)) ? string.Empty : (string)reader["GameType"];
                     int currentPlayers = reader.GetInt32("CurrentPlayers");
-                    string hostName = (reader.IsDBNull(4)) ? string.Empty : (string)reader["GameType"];
+                    string hostName = (reader.IsDBNull(4)) ? string.Empty : (string)reader["HostName"];
                     string password = (reader.IsDBNull(5)) ? null : (string)reader["Password"];
 
                     // 조회한 방 정보를 Room_info 객체로 생성하여 roomList에 추가
@@ -648,6 +648,40 @@ public class SQL_Manager : MonoBehaviour
         }
     }
 
-    
+    public string FindRoomType(string RoomID)
+    {
+        try
+        {
+            if (!connection_check(connection))
+            {
+                return string.Empty;
+            }
+
+            // SQL 쿼리로 ID가 존재하는지 확인
+            string SQL_Command =
+                string.Format($@"SELECT GameType FROM roomlist WHERE RoomID = '{RoomID}'");
+            MySqlCommand cmd = new MySqlCommand(SQL_Command, connection);
+            reader = cmd.ExecuteReader();
+
+            // ID가 이미 존재하면 false 반환
+            if (reader.HasRows)
+            {
+                reader.Read();
+                string gameType = (reader.IsDBNull(2)) ? string.Empty : (string)reader["GameType"];
+                if (!reader.IsClosed) reader.Close();
+                return gameType;
+            }
+            if (!reader.IsClosed) reader.Close();
+            return null;
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e.Message);
+            if (!reader.IsClosed) reader.Close();
+            return null;
+        }
+    }
+
+
 
 }

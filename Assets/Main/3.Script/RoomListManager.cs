@@ -33,10 +33,10 @@ public class RoomListManager : MonoBehaviour
         sqlManager = SQL_Manager.instance; // SQL_Manager 인스턴스 가져오기
     }
 
-    private void Start()
-    {
-        FetchRoomList();
-    }
+    //private void Start()
+    //{
+    //    FetchRoomList();
+    //}
 
 
 
@@ -44,63 +44,63 @@ public class RoomListManager : MonoBehaviour
     /// DB에서 방 목록을 가져와 UI에 업데이트하는 메서드
     /// Start에 넣어두었고 추후 새로고침 버튼을 만들어 버튼이 눌릴때마다 호출되게 할 수 있음
     /// </summary>
-    public void FetchRoomList()
-    {
-        // DB에서 방 목록을 가져옴
-        sqlManager.FetchRoomList();
-        if(sqlManager.roomDic.Count>0)
-        {
-            // 방 목록 UI에 추가
-            foreach (int room in sqlManager.roomDic.Keys)
-            {
-                if (!roomButtonDic.ContainsKey(room))
-                    AddRoomToUI(sqlManager.roomDic[room]);
-            }
-            foreach (int room in roomButtonDic.Keys)
-            {
-                if (!sqlManager.roomDic.ContainsKey(room))
-                {
-                    Destroy(roomButtonDic[room].gameObject);
-                    roomButtonDic.Remove(room);
-                }
-            }
-        }
-    }
+    //public void FetchRoomList()
+    //{
+    //    // DB에서 방 목록을 가져옴
+    //    sqlManager.FetchRoomList();
+    //    if(sqlManager.roomDic.Count>0)
+    //    {
+    //        // 방 목록 UI에 추가
+    //        foreach (int room in sqlManager.roomDic.Keys)
+    //        {
+    //            if (!roomButtonDic.ContainsKey(room))
+    //                AddRoomToUI(sqlManager.roomDic[room]);
+    //        }
+    //        foreach (int room in roomButtonDic.Keys)
+    //        {
+    //            if (!sqlManager.roomDic.ContainsKey(room))
+    //            {
+    //                Destroy(roomButtonDic[room].gameObject);
+    //                roomButtonDic.Remove(room);
+    //            }
+    //        }
+    //    }
+    //}
 
     /// <summary>
     /// 방 정보를 UI에 추가하는 메서드
     /// </summary>
     /// <param name="roomInfo">방 정보 객체</param>
-    private void AddRoomToUI(Room_info roomInfo)
-    {
-        Room_Btn_Control newButton = Instantiate(roomButtonPrefab, contentPanel);
+    //private void AddRoomToUI(Room_info roomInfo)
+    //{
+    //    Room_Btn_Control newButton = Instantiate(roomButtonPrefab, contentPanel);
 
-        // UI 요소 업데이트
-        newButton.SetRoomBtn(roomInfo);
+    //    // UI 요소 업데이트
+    //    newButton.SetRoomBtn(roomInfo);
 
-        // 방에 입장하는 버튼 클릭 이벤트 설정
-        newButton.GetComponent<Button>().onClick.AddListener(() => newButton.Join_Room());
-        roomButtonDic.Add(roomInfo.Room_ID,newButton);
-    }
+    //    // 방에 입장하는 버튼 클릭 이벤트 설정
+    //    newButton.GetComponent<Button>().onClick.AddListener(() => newButton.Join_Room());
+    //    roomButtonDic.Add(roomInfo.Room_ID,newButton);
+    //}
 
     /// <summary>
     /// 방을 삭제하는 메서드
     /// </summary>
     /// <param="roomID">삭제할 방 ID</param>
-    public void DeleteRoom(int roomID)
-    {
-        bool isDeleted = sqlManager.DeleteRoom(roomID);
+    //public void DeleteRoom(int roomID)
+    //{
+    //    bool isDeleted = sqlManager.DeleteRoom(roomID);
 
-        if (isDeleted)
-        {
-            // UI 업데이트
-            FetchRoomList();
-        }
-        else
-        {
-            Debug.LogError("Failed to delete room in DB");
-        }
-    }
+    //    if (isDeleted)
+    //    {
+    //        // UI 업데이트
+    //        FetchRoomList();
+    //    }
+    //    else
+    //    {
+    //        Debug.LogError("Failed to delete room in DB");
+    //    }
+    //}
 
     /// <summary>
     /// 방의 현재 플레이어 수를 업데이트하는 메서드

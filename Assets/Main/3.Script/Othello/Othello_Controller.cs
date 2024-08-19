@@ -60,13 +60,22 @@ public class Othello_Controller : NetworkBehaviour
 
     private bool isHost = false;
 
-    public override void OnStartLocalPlayer()
-    {
-        if (NetworkServer.active && NetworkClient.isConnected)
-            isHost = true;
-        else if (NetworkClient.isConnected && !NetworkServer.active)
-            isHost = false;
-    }
+
+
+    //public override void OnStartLocalPlayer()
+    //{
+    //    if (NetworkServer.active && NetworkClient.isConnected)
+    //        isHost = true;
+    //    else if (NetworkClient.isConnected && !NetworkServer.active)
+    //        isHost = false;
+    //}
+    private static event Action onMethod;
+    [SyncVar]
+    public int connectcount;
+    [SyncVar]
+    public bool isStart;
+    [SyncVar]
+    public bool isReady;
 
     private void Awake()
     {
@@ -75,17 +84,7 @@ public class Othello_Controller : NetworkBehaviour
         empty = LayerMask.NameToLayer("Empty");
         black = LayerMask.NameToLayer("Black");
         white = LayerMask.NameToLayer("White");
-
-        if (isHost)
-        {
-            playerLayer = black;
-            isPlayerTurn = true;
-        }
-        else
-        {
-            playerLayer = white;
-            isPlayerTurn = false;
-        }
+        
 
         AllChip = GameObject.FindGameObjectsWithTag("Chip");
         foreach (GameObject chip in AllChip)
@@ -95,11 +94,74 @@ public class Othello_Controller : NetworkBehaviour
             
             FindChip.Add(posInt, chip);
         }
+        isStart = false;
+        isReady = false;
+    }
+    private void Start()
+    {
+        if (!isLocalPlayer) return;
+        //GetCount();
+        Debug.Log(connectcount);
+        if (1 == connectcount%2)
+            isHost = true;
+        
+        if (isHost)
+            {
+                playerLayer = black;
+                isPlayerTurn = true;
+            }
+            else
+            {
+                playerLayer = white;
+                isPlayerTurn = false;
+            }
+
+        
     }
 
+    public override void OnStartAuthority()
+    {
+        if (isLocalPlayer)
+            transform.GetChild(0).gameObject.SetActive(true);
+        onMethod += ClickChip;
+        Debug.Log("³ªµé¾î¿È?");
+    }
+
+    [ClientCallback]
+    private void OnDestroy()
+    {
+        if (!isLocalPlayer) return;
+
+        onMethod -= ClickChip;
+        
+    }
+
+    public void SetConnectionOrder(int order)
+    {
+        connectcount = order;
+    }
+    [Command]
+    public void CmdSetReady(bool ready)
+    {
+        isReady = ready;
+        RoomManager.instance.CheckOthello_AllPlayersReady();
+    }
+    public void SetReady()
+    {
+        if (!isLocalPlayer) return;
+        isReady = !isReady;
+        CmdSetReady(isReady);
+    }
     private void Update()
     {
-        if(isPlayerTurn && !isChipTurn && !isFinish)
+        if (!isLocalPlayer||!isStart) return;
+        //Debug.Log(white);
+        //Debug.Log(black);
+        //Debug.Log(empty);
+
+        //Debug.Log("playerLayer " + playerLayer);
+        //Debug.Log("isPlayerTurn " + isPlayerTurn);
+        if (isPlayerTurn && !isChipTurn && !isFinish)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
@@ -135,6 +197,12 @@ public class Othello_Controller : NetworkBehaviour
                                 ChipAnim.SetTrigger($"Ready{playerType}");
                             }
                         }
+                        if (Input.GetMouseButtonDown(0) && hitDisFilter.Count > 0)
+                        {
+                            ClickChip();
+                        }
+
+
                     }
                 }
             }
@@ -142,10 +210,8 @@ public class Othello_Controller : NetworkBehaviour
     }
     [Client]
     public void ClickChip()
-    {
-        if (Input.GetMouseButtonDown(0) && hitDisFilter.Count > 0)
-        {
-            isChipTurn = true;
+    {        
+            
             if (ChipRenderer != null)
             {
                 ChipRenderer.material.color = SetColor;
@@ -158,34 +224,34 @@ public class Othello_Controller : NetworkBehaviour
             //List<KeyValuePair<int, List<Vector3Int>>> turnChipToList = hitDisFilter.ToList();
             List<int> turnChipKey = new List<int>();
             List<List<Vector3Int>> turnChipValue = new List<List<Vector3Int>>();
-            foreach(int key in hitDisFilter.Keys)
+            foreach (int key in hitDisFilter.Keys)
             {
                 turnChipKey.Add(key);
                 turnChipValue.Add(hitDisFilter[key]);
             }
 
-            cmdSendMethod(Vector3Int.RoundToInt(emptyObj.transform.position), playerType, turnChipKey, turnChipValue, isChipTurn);
+            cmdSendMethod(Vector3Int.RoundToInt(emptyObj.transform.position), playerType, turnChipKey, turnChipValue);
             emptyObj = null;
-        }
+        
     }
 
     [Command]
-    private void cmdSendMethod(Vector3Int position, PlayerType player, List<int> turnChipKey, List<List<Vector3Int>> turnChipValue, bool chipturn)
+    private void cmdSendMethod(Vector3Int position, PlayerType player, List<int> turnChipKey, List<List<Vector3Int>> turnChipValue)
     {
         
-        RpcClickChip(position, player, turnChipKey, turnChipValue, chipturn);
+        RpcClickChip(position, player, turnChipKey, turnChipValue);
     }
 
     [ClientRpc]
-    private void RpcClickChip(Vector3Int position, PlayerType player, List<int> turnChipKey, List<List<Vector3Int>> turnChipValue, bool chipturn)
+    private void RpcClickChip(Vector3Int position, PlayerType player, List<int> turnChipKey, List<List<Vector3Int>> turnChipValue)
     {
-        isChipTurn = chipturn;
+        isChipTurn = true;
 
         emptyObj = FindChip[position];
-        //emptyObj.Chip.TryGetComponent(out ChipRenderer);
-        //emptyObj.Chip.TryGetComponent(out ChipAnim);
+        emptyObj.TryGetComponent(out ChipRenderer);
+        emptyObj.TryGetComponent(out ChipAnim);
         ChipRenderer.material.color = SetColor;
-        ChipAnim.SetTrigger($"Cr{playerType}");
+        ChipAnim.SetTrigger($"Cr{player}");
 
         hitDisFilter.Clear();
         foreach(int key in turnChipKey)
@@ -204,6 +270,11 @@ public class Othello_Controller : NetworkBehaviour
         //}
         TurnChip(player);
     }
+    //[ClientRpc]
+    //private void RpcHandleClickChip()
+    //{
+    //    onMethod?.Invoke()
+    //}
 
 
     private bool RayToEmptyObj(GameObject obj)
@@ -302,6 +373,7 @@ public class Othello_Controller : NetworkBehaviour
         if (Chip_Co.Count.Equals(0))
         {
             isChipTurn = false;
+            isPlayerTurn = !isPlayerTurn;
             BlackChip = 0;
             WhiteChip = 0;
             for(int i = 0; i < AllChip.Length;i++)
@@ -334,6 +406,7 @@ public class Othello_Controller : NetworkBehaviour
                     else
                         Debug.Log("½Â¸®");
                 }
+                isStart = false;
             }
             hitDisFilter.Clear();
         }

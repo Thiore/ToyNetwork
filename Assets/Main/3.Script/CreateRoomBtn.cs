@@ -7,29 +7,26 @@ using UnityEngine.SceneManagement;
 
 
 
-public class CreateRoomBtn : MonoBehaviour
+public class CreateRoomBtn : NetworkBehaviour
 {
     [SerializeField] private Text GameType;
     [SerializeField] private InputField RoomName;
     [SerializeField] private InputField Password;
-    
+
 
     //방만들기
     public void Hosting_Room()
     {
-        if(RoomName.text.Equals(string.Empty))
+        if (RoomName.text.Equals(string.Empty))
         {
             RoomName.text = SQL_Manager.instance.info.User_Name + "님의 방입니다.";
         }
-        if(SQL_Manager.instance.CreateRoom(RoomName.text, GameType.text, Password.text != "" ? Password.text : null))
+        if (SQL_Manager.instance.CreateRoom(RoomName.text, GameType.text, Password.text != "" ? Password.text : null))
         {
-            RoomManager.instance.networkAddress = SQL_Manager.instance.SelectRoomID().ToString();
-            Debug.Log($"{RoomManager.instance.networkAddress}번 방에 입장합니다.");
-            RoomManager.instance.SetGame(GameType.text);
+            //RoomManager.instance.networkAddress = SQL_Manager.instance.SelectRoomID().ToString();
+            //Debug.Log($"{RoomManager.instance.networkAddress}번 방에 입장합니다.");
+            //RoomManager.instance.SetGame(SQL_Manager.instance.SelectRoomID().ToString());
 
-            RoomManager.instance.StartHost();
-
-            SceneManager.LoadScene(RoomManager.instance.GameplayScene);
         }
     }
 }
