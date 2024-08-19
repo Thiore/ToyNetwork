@@ -12,6 +12,7 @@ public class Coin : NetworkBehaviour
     private Vector3 coinUp;
     private bool isThrow;
     private PutOn puton;
+    
     private void Awake()
     {
         TryGetComponent(out rb);
@@ -23,17 +24,22 @@ public class Coin : NetworkBehaviour
    
     private void Update()
     {
-        
+        if (hasAuthority) return; //로컬플레이어만
+
         if (Input.GetKeyDown(KeyCode.Return))
         {
             Debug.Log(transform.up);
-            rb.AddForce(Vector3.up * Force, ForceMode.Impulse);
-            float rand = Random.Range(0, 1f);
-            rb.angularDrag = rand;
-            rb.angularVelocity = Vector3.left * 50f;
-            
-            
+            //rb.AddForce(Vector3.up * Force, ForceMode.Impulse);
+            //float rand = Random.Range(0, 1f);
+            //rb.angularDrag = rand;
+            //rb.angularVelocity = Vector3.left * 50f;
+
+            Debug.Log(transform.up);
+            CmdBounceCoin();
+
+
         }
+        
         if (isThrow)
             return;
         if (coinUp != Vector3.zero && !isThrow)
@@ -62,6 +68,22 @@ public class Coin : NetworkBehaviour
         }
         
     
+    }
+    [Command]  // 클라이언트에서 서버로 명령을 보내는 메서드
+    private void CmdBounceCoin()
+    {
+        Debug.Log("CmdBounceCoin() 호출됨");
+        RpcCoin();  // 모든 클라이언트에서 코인에 힘을 가하는 RPC 호출
+    }
+
+    [ClientRpc]
+    private void RpcCoin()
+    {
+        Debug.Log("RpcCoin() 호출됨");
+        rb.AddForce(Vector3.up * Force, ForceMode.Impulse);
+        float rand = Random.Range(0, 1f);
+        rb.angularDrag = rand;
+        rb.angularVelocity = Vector3.left * 50f;
     }
 
     private void OnCollisionExit(Collision collision)

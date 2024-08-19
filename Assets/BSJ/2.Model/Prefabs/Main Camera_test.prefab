@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 4040268029124843586}
   - component: {fileID: 7031847197843535528}
   - component: {fileID: -4052019896028274899}
-  - component: {fileID: 8964656678170456368}
+  - component: {fileID: 7463410702276037759}
   m_Layer: 3
   m_Name: Main Camera_test
   m_TagString: Player
@@ -46,7 +46,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4040268029124843613}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -151,6 +151,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84d6e50bd6f674e4ba87b54ca222e6bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   LB: {fileID: 6703591084508991862, guid: 29664475c54680a449077da2960c20ca, type: 3}
   RT: {fileID: 4677849740204339680, guid: 51f459538f458e84d97ba5989409dc2e, type: 3}
   Chip_Prefabs: {fileID: 8242623377463246510, guid: 823bf64b084598c498d82bad9ed4ff23, type: 3}
@@ -166,10 +169,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84e4519850451b542be2f99a0a16f080, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerType: 0
+  playerType: 1
   chipBlack: {fileID: 2100000, guid: 449b797cdaa26a849a0325e3ea1aa401, type: 2}
   chipWhite: {fileID: 2100000, guid: 83540389fcd4e774e862adcd9a82366e, type: 2}
   chipPrefab: {fileID: 8242623377463246510, guid: 823bf64b084598c498d82bad9ed4ff23, type: 3}
+  chipRenderer: {fileID: 7268351488787316038, guid: 823bf64b084598c498d82bad9ed4ff23, type: 3}
 --- !u!114 &7031847197843535528
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,7 +181,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4040268029124843613}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a553cb17010b2403e8523b558bffbc14, type: 3}
   m_Name: 
@@ -222,7 +226,7 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
---- !u!114 &8964656678170456368
+--- !u!114 &7463410702276037759
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -231,9 +235,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 4040268029124843613}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b73bd4f2996f7934e8d7354bb938e5a1, type: 3}
+  m_Script: {fileID: 11500000, guid: 62819facc78e0ef44956365c4e072d21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  coinPrefab: {fileID: 6545285056633645601, guid: f09fc9e6dc59ae94fa36f7d4d8a7546b, type: 3}

@@ -32,7 +32,7 @@ public class Player_Network : NetworkBehaviour
 
     public override void OnStartAuthority()
     {
-        if(isLocalPlayer)
+        if(hasAuthority)
         {
 
         }
@@ -77,7 +77,6 @@ public class Player_Network : NetworkBehaviour
                             }
                         }
                         chip.IsPut = true;
-                        hit.collider.gameObject.GetComponent<MeshFilter>().mesh = chip.ChipMesh;
                         MeshRenderer mate = chip.GetComponent<MeshRenderer>();
                         mate.material = myTurn ? chip_material[0] : chip_material[1];
                         //logic.AddChip(chip, this);

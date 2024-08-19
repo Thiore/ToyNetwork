@@ -8,26 +8,6 @@ public class Gomoku_Logic : MonoBehaviour
     private List<Chip> Black_Chip = new List<Chip>();
     private List<Chip> White_Chip = new List<Chip>();
     [SerializeField] public GameObject result_Panel; //이건 조립 
-    [SerializeField] private GameObject Chip_Pivot;
-
-    private void Awake()
-    {
-        Chip_Pivot = GameObject.Find("Chip_Pivot");
-        int index = 0;
-        for (int i = 0; i < 19; i++)
-        {
-            for (int j = 0; j < 19; j++)
-            {
-                if (Chip_Pivot.transform.GetChild(index).TryGetComponent(out Chip chip))
-                {
-                    chip.Row = j;
-                    chip.Col = i;
-                    index++;
-                }
-            }
-        }
-    }
-
 
     // 착수 이후 결과값 검출
     private void Check_Chip(Player player, Chip lastChip)

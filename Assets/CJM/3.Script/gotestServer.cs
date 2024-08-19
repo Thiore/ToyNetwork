@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using Mono.CecilX;
 
 public enum eType
 {
@@ -14,6 +15,7 @@ public class gotestServer : MonoBehaviour
     public eType type;
 
     private NetworkManager manager;
+    private GameObject board;
 
     private void Start()
     {
@@ -36,14 +38,38 @@ public class gotestServer : MonoBehaviour
         }
         else
         {
-            manager.StartServer();
+            NetworkManager.singleton.StartServer();
             Debug.Log($"{manager.networkAddress} Start Server");
             NetworkServer.OnConnectedEvent += (NetworkConnectionToClient) =>
             {
                 Debug.Log($"New Client Connect : {NetworkConnectionToClient.address}");
+
             };
             NetworkServer.OnDisconnectedEvent += (NetworkConnectionToClient) => { Debug.Log($"Client DisConnect : {NetworkConnectionToClient.address}"); };
+
+            BoardGO();
+            NetworkServer.Spawn(this.board);
         }
+    }
+
+    public void NetworkTest(NetworkConnection conn)
+    {
+        NetworkServer.Spawn(board.gameObject, conn);
+    }
+
+
+
+    public void BoardGO()
+    {
+        var boardfab = Resources.Load("Prefabs/Gogame_board") as GameObject;
+        var board = Instantiate(boardfab).transform.GetComponent<Board>();
+        var iden = board.GetComponent<NetworkIdentity>();
+        NetworkServer.Spawn(board.gameObject, iden.connectionToClient);
+        board.InitBoard();
+        this.board = board.gameObject;
+        NetworkConnectionToClient f;
+        f.identity
+       
     }
 
     public void Start_Client()
@@ -63,6 +89,8 @@ public class gotestServer : MonoBehaviour
         //}
     }
 
+    
+
     private void OnApplicationQuit()
     {
         if (NetworkClient.isConnected)
@@ -74,6 +102,7 @@ public class gotestServer : MonoBehaviour
             manager.StopServer();
         }
     }
+
 
 
 }

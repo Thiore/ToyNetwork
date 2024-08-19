@@ -55,7 +55,7 @@ namespace Mirror
         public bool isClient => netIdentity.isClient;
 
         /// <summary>True if this object is the the client's own local player.</summary>
-        public bool isLocalPlayer => netIdentity.isLocalPlayer;
+        public bool hasAuthority => netIdentity.isLocalPlayer;
 
         /// <summary>True if this object is on the server-only, not host.</summary>
         public bool isServerOnly => netIdentity.isServerOnly;
@@ -356,7 +356,7 @@ namespace Mirror
 
             // local players can always send commands, regardless of authority,
             // other objects must have authority.
-            if (!(!requiresAuthority || isLocalPlayer || isOwned))
+            if (!(!requiresAuthority || hasAuthority || isOwned))
             {
                 Debug.LogWarning($"Command {functionFullName} called on {name} without authority.", gameObject);
                 return;

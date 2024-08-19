@@ -1,27 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-    public enum PlayerType { Black, White}
+using Mirror;
+    
+public enum PlayerType { Black, White}
 
-public class Select_color : MonoBehaviour
+public class Select_color : NetworkBehaviour
 {
     public PlayerType playerType;
 
     public Material chipBlack;
     public Material chipWhite;
     public GameObject chipPrefab;
-    private Renderer chipRenderer;
-    
+    public Renderer chipRenderer;
 
-   
-    private void Start()
+    private void Awake()
     {
         chipRenderer = chipPrefab.GetComponent<Renderer>();
-        SetPlayerLayer();
-        SetChipMaterial();
+        if (chipRenderer == null)
+        {
+            Debug.LogError("Renderer component not found on chipPrefab");
+        }
     }
 
-    private void SetPlayerLayer()
+
+    //private void Start()
+    //{
+    ////    if (isLocalPlayer) // 로컬 플레이어에서만 색상 설정
+    ////    {
+    ////        SetChipMaterial();
+    ////        SetPlayerLayer();
+    ////    }
+    ////}
+
+    public void SetPlayerLayer()
     {
         if (playerType == PlayerType.Black)
         {
@@ -33,7 +45,7 @@ public class Select_color : MonoBehaviour
         }
     }
 
-    private void SetChipMaterial()
+    public void SetChipMaterial()
     {
         if (playerType == PlayerType.Black)
         {

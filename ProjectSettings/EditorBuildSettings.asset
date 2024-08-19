@@ -6,24 +6,18 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 0
-    path: Assets/Mango/1.Scene/Title_Scene.unity
-    guid: 446df105bb6534c418cca18e5c22ee29
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/Mango/1.Scene/RoomList_Scene.unity
-    guid: 80381eb348f1c1a4ca3ce22bbc26ac9b
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/Mango/1.Scene/Lobby_Scene.unity
-    guid: 6a495e0025d63204b9287394e9d27d7c
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 0
-    path: Assets/CJM/1.Scene/CJMScene.unity
-    guid: 095c80aa442e8da409da99e0696f6afd
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
-    path: Assets/Main/1.Scene/Othello.unity
-    guid: 9ed9b2ff9d2efc3489666782f60217d8
-  - enabled: 0
-    path: Assets/Main/1.Scene/Login.unity
-    guid: 81399f5f58a234b4a927e5afdb19c6be
-  - enabled: 0
-    path: Assets/Main/1.Scene/Lobby.unity
-    guid: cb04686e7b9ce4340a585dc1ab4a0baa
+    path: Assets/BSJ/1.Scene/BSJScene_Server.unity
+    guid: 7219fe85682a78c4399466e8b006b431
   m_configObjects: {}
