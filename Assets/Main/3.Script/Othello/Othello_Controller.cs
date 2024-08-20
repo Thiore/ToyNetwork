@@ -270,7 +270,7 @@ public class Othello_Controller : NetworkBehaviour
                     else
                         Log.text = "½Â¸®";
                 }
-
+                Invoke("Reset",3f);
             }
             //hitDisFilter.Clear();
 
@@ -278,17 +278,31 @@ public class Othello_Controller : NetworkBehaviour
 
     }
 
-    //private void Reset()
-    //{
-    //    foreach(Vector3Int vec3 in FindChip.Keys)
-    //    {
-    //        if()
-    //    }
-        
-            
-        
-    //}
-    [Client]
+    private void Reset()
+    {
+        foreach (Vector3Int vec3 in FindChip.Keys)
+        {
+            for(int i = 0; i < BlackReset.Length;i++)
+            {
+                if (FindChip[vec3].Equals(BlackReset[i]))
+                {
+                    FindChip[vec3].GetComponent<Animator>().SetTrigger("TurnBlack");
+                    continue;
+                }
+                else if (FindChip[vec3].Equals(WhiteReset[i]))
+                {
+                    FindChip[vec3].GetComponent<Animator>().SetTrigger("TurnWhite");
+                    continue;
+                }
+            }
+            FindChip[vec3].GetComponent<Animator>().SetTrigger("None");
+
+        }
+
+
+
+    }
+        [Client]
     public void Send()
     {
         if (!isLocalPlayer) return;

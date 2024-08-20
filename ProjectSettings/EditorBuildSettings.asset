@@ -17,7 +17,13 @@ EditorBuildSettings:
   - enabled: 0
     path: 
     guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: Assets/Main/1.Scene/LobbyServer.unity
+    guid: abf10e6324e89094a9b3ce42abe25b18
   - enabled: 1
-    path: Assets/BSJ/1.Scene/BSJScene_Server.unity
-    guid: 7219fe85682a78c4399466e8b006b431
+    path: Assets/Main/1.Scene/Othello.unity
+    guid: 9ed9b2ff9d2efc3489666782f60217d8
   m_configObjects: {}
