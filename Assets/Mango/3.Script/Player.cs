@@ -7,18 +7,11 @@ using UnityEngine.UIElements;
 
 public class Player : NetworkBehaviour
 {
-    public Color color;
-    public enum Color
+    public GoColor color;
+    public enum GoColor
     {
         White = 0,
         Black
-    }
-
-    [SyncVar]
-    public int MyNumber = 0;
-    public void MyNumberGet(int num)
-    {
-        MyNumber = num;
     }
 
     private int myColor = 0;
@@ -26,12 +19,18 @@ public class Player : NetworkBehaviour
     //0Èæ 1¹é
     [SerializeField] private Material[] chip_material;
     // false Èæ true ¹é 
+    [SyncVar]
     private bool myTurn = false;
     public bool Myturn { get => myTurn; }
+
+    private bool thefirst = false;
 
     [SerializeField] private Gomoku_Logic logic;
     [SerializeField] private Board board;
     private GoGameManager myGameManager;
+
+    [SyncVar]
+    public int connectcount;
 
 
     private void Awake()
@@ -41,12 +40,30 @@ public class Player : NetworkBehaviour
         board = GameObject.FindObjectOfType<Board>();
     }
 
+    private void Start()
+    {
+        if (!isLocalPlayer) return;
+        //GetCount();
+        Debug.Log(connectcount);
+        if (1 == connectcount % 2)
+            thefirst = true;
+
+        if (thefirst)
+        {
+            color = GoColor.Black;
+            myTurn = true;
+        }
+        else
+        {
+            color = GoColor.White;
+            myTurn = false;
+        }
+    }
+
 
     private void Update()
     {
-        if (!isLocalPlayer) return;
-
-        Debug.Log(MyNumber);
+        if (!isLocalPlayer || !myTurn) return;
 
         if (Input.GetMouseButtonUp(0) && logic.result_Panel.activeSelf.Equals(false))
         {
@@ -59,10 +76,12 @@ public class Player : NetworkBehaviour
                     if (hit.collider.TryGetComponent(out Chip chip))
                     {
                         ClientChip(chip);
+                        CmdTurn();
                     }
                 }
             }
         }
+
     }
 
 
@@ -70,11 +89,6 @@ public class Player : NetworkBehaviour
     public void ClientChip(Chip chip)
     {
         CmdPutChip(chip);
-    }
-
-    public int GetColor()
-    {
-        return myColor;
     }
 
     [Command]
@@ -86,24 +100,37 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void RPCDrawBoard(Chip chip)
     {
-        if(chip.IsPut == false)
+
+        if (chip.IsPut == false)
         {
             chip.IsPut = true;
             chip.MeshrenderGet.enabled = true;
-            chip.MeshrenderGet.material = myTurn ? chip_material[0] : chip_material[1];
+            chip.MeshrenderGet.material = (1 == connectcount % 2) ? chip_material[0] : chip_material[1];
             logic.AddChip(chip, this);
-            TurnChange();
         }
     }
 
 
+    [Command]
+    public void CmdTurn()
+    {
+        TurnChange();
+    }
+
+    [ClientRpc]
     public void TurnChange()
     {
-        myTurn = !myTurn;
+        foreach(var player in FindObjectsOfType<Player>())
+        {
+            player.myTurn = !player.myTurn;
+        }
     }
 
 
-
+    public void SetConnectionOrder(int order)
+    {
+        connectcount = order;
+    }
 
 
 }

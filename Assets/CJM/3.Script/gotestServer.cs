@@ -14,7 +14,6 @@ public class gotestServer : MonoBehaviour
     public eType type;
 
     private NetworkManager manager;
-    public int num = 0;
 
     private void Start()
     {
@@ -53,14 +52,6 @@ public class gotestServer : MonoBehaviour
     }
 
     
-    public void IncreadeNum(NetworkConnectionToClient conn)
-    {
-        GameObject playerobj = conn.identity.gameObject;
-        Player player = playerobj.transform.GetComponent<Player>();
-        player.MyNumberGet(num);
-        num++;
-    }
-
     public void BoardGO()
     {
         var boardfab = Resources.Load("Prefabs/Gogame_board") as GameObject;

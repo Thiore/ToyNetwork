@@ -44,11 +44,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00454724cdcfea440b03ed58e9f07b83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
   color: 0
   chip_material:
   - {fileID: 2100000, guid: 449b797cdaa26a849a0325e3ea1aa401, type: 2}
   - {fileID: 2100000, guid: 83540389fcd4e774e862adcd9a82366e, type: 2}
   logic: {fileID: 0}
+  board: {fileID: 0}
+  connectcount: 0
 --- !u!114 &1459875917674087491
 MonoBehaviour:
   m_ObjectHideFlags: 0
