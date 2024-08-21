@@ -15,9 +15,12 @@ public class Kick_Chip : NetworkBehaviour
     private float currentRadius = 0f; // 원의 현재 반지름
     private Camera cam;
     //[SerializeField] private GameObject lb;
-    private PutOn putOn_Player;
+
+    [SyncVar]
+    [SerializeField]private PutOn player;
+    
     private RPC_GO_BSJ rpc_go_bsj;
-    public bool ismine = false;
+    //public bool ismine = false;
     private void OnEnable()
     {
         isDie = false;
@@ -25,6 +28,7 @@ public class Kick_Chip : NetworkBehaviour
     
     void Start()
     {
+       
         rb = GetComponent<Rigidbody>();
         
 
@@ -39,26 +43,36 @@ public class Kick_Chip : NetworkBehaviour
         lineRenderer.useWorldSpace = false; // 로컬 좌표를 사용
         lineRenderer.enabled = false; // 드래그할 때만 보이게 설정
 
-        rpc_go_bsj = GetComponent<RPC_GO_BSJ>();
+        //rpc_go_bsj = GetComponent<RPC_GO_BSJ>();
+        player = connectionToClient.identity.GetComponent<PutOn>();
+
+        cam = player.GetComponent<Camera>();
+        TryGetComponent(out MeshRenderer chipRen);
+        if (player.playerType.Equals(PlayerType.Black))
+            chipRen.material.color = Color.black;
+        else
+            chipRen.material.color = Color.white;
         
+        
+        //gameObject.layer = LayerMask.NameToLayer((player.playerType).ToString());
         // 클라이언트 권한 부여를 서버에서 처리할 수 있도록 함
-        if (!isServer)
-        {
-            // 권한을 부여할 필요가 있을 때 서버에서 클라이언트 권한을 부여합니다.
-            // 이 부분은 실제 게임 로직에 맞게 조정 필요
-            foreach (var conn in NetworkServer.connections.Values)
-            {
-                // 특정 오브젝트에 권한을 부여할 클라이언트를 찾는 로직
-                // 예를 들어, 플레이어가 특정 오브젝트와 상호작용할 때
-                var identity = GetComponent<NetworkIdentity>();
-                identity.AssignClientAuthority(conn);
-            }
-        }
+        //if (!isServer)
+        //{
+        //    // 권한을 부여할 필요가 있을 때 서버에서 클라이언트 권한을 부여합니다.
+        //    // 이 부분은 실제 게임 로직에 맞게 조정 필요
+        //    foreach (var conn in NetworkServer.connections.Values)
+        //    {
+        //        // 특정 오브젝트에 권한을 부여할 클라이언트를 찾는 로직
+        //        // 예를 들어, 플레이어가 특정 오브젝트와 상호작용할 때
+        //        var identity = GetComponent<NetworkIdentity>();
+        //        identity.AssignClientAuthority(conn);
+        //    }
+        //}
     }
  
     void Update()
     {
-        if (!putOn_Player.isLocalPlayer) return;
+        if (!isOwned) return;
         //GameObject ismine_ob;
         if (Input.GetMouseButtonDown(0))
         {
@@ -122,38 +136,39 @@ public class Kick_Chip : NetworkBehaviour
             Vector3 forceDirection = endPoint - startPoint;
             //rb.AddForce(-forceDirection.normalized * forceMultiplier * currentRadius, ForceMode.Impulse);
             Vector3 force = -forceDirection.normalized * forceMultiplier * currentRadius;
-
+            //putOn_Player.KickForce(force, gameObject);
             // 위치와 회전을 서버에 동기화 요청
             //if (isLocalPlayer)
-            if (putOn_Player.isLocalPlayer)//
-            {
-                int num;
-                for(int i = 0; i < putOn_Player.Chip_Array.Length;i++)
-                {
-                    if (putOn_Player.Chip_Array[i] != gameObject)
-                        continue;
-                    else
-                    {
-                        num = i;
-                        putOn_Player.CmdKickEgg(num, force);
-                        break;
-                    }
-                }
-                //if (isLocalPlayer)
-                
+            //if (isLocalPlayer)//
+            //{
+            //int num;
+            //for(int i = 0; i < putOn_Player.Chip_Array.Length;i++)
+            //{
+            //    if (putOn_Player.Chip_Array[i] != gameObject)
+            //        continue;
+            //    else
+            //    {
+            //        num = i;
+            //        //putOn_Player.CmdKickEgg(num, force);
+            //        //putOn_Player.Send_RpcKickEgg(num, force, transform.position, transform.rotation);
+            //        break;
+            //    }
+            //}
+            //if (isLocalPlayer)
 
-            }
-            else
-            {
-                Debug.Log("CmdKickEgg의 권한 없음");
-                //CmdKickEgg();
-            }
+
+            //}
+            //else
+            //{
+            //    Debug.Log("CmdKickEgg의 권한 없음");
+            //    //CmdKickEgg();
+            //}
         }
     }
     public void SetPutOn(PutOn put)
     {
-        putOn_Player = put;
-        cam = putOn_Player.GetComponent<Camera>();
+        player = put;
+        
     }
     // 원 그리기
     void DrawCircle(float radius, Vector3 dir)
@@ -188,7 +203,7 @@ public class Kick_Chip : NetworkBehaviour
     private void InvokeDie()
     {
 
-        putOn_Player.Die(gameObject);
+        player.Die(gameObject);
     }
 
    

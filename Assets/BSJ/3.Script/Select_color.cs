@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
-public enum PlayerType { Black, White }
+
 
 public class Select_color : NetworkBehaviour
 {

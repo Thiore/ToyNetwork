@@ -9,15 +9,17 @@ public enum Type
     Client_BSJ
 }
 
-public class Server_Checker_BSJ : MonoBehaviour
+public class Server_Checker_BSJ : NetworkManager
 {
     public Type type_BSJ;
+    private int addPlayerCount;
 
-    private NetworkManager manager_BSJ;
+    
+    public List<GameObject> spawnedObj = new List<GameObject>();
 
-    private void Start()
+    public override void Start()
     {
-        manager_BSJ = GetComponent<NetworkManager>();
+        
         if (type_BSJ.Equals(Type.Server_BSJ))
         {
             Start_Server_BSJ();
@@ -26,7 +28,21 @@ public class Server_Checker_BSJ : MonoBehaviour
         {
             Start_Client_BSJ();
         }
+        addPlayerCount = 0;
     }
+
+    public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+    {
+        base.OnServerAddPlayer(conn);
+        addPlayerCount++;
+        GameObject player = conn.identity.gameObject;
+        PutOn ChipPlayer = player.GetComponent<PutOn>();
+        int chipType = addPlayerCount % 2;
+            ChipPlayer.playerType = (PlayerType)chipType;
+
+
+    }
+    
 
     public void Start_Server_BSJ()
     {
@@ -38,9 +54,9 @@ public class Server_Checker_BSJ : MonoBehaviour
         else
         {
             //네트워크 메서드 사용
-            manager_BSJ.StartServer();
+            StartServer();
             // 서버 입장에서 어떤 클라이언트가(ip) 들어왔는지 확인
-            Debug.Log($"{manager_BSJ.networkAddress} StartServer");
+            Debug.Log($"{networkAddress} StartServer");
             NetworkServer.OnConnectedEvent +=
                 (NetworkConnectionToClient) =>
                 {
@@ -57,18 +73,18 @@ public class Server_Checker_BSJ : MonoBehaviour
     }
     public void Start_Client_BSJ()
     {
-        manager_BSJ.StartClient();
-        Debug.Log($"{manager_BSJ.networkAddress} StartClient");
+        StartClient();
+        Debug.Log($"{networkAddress} StartClient");
     }
-    private void OnApplicationQuit()
+    public override void OnApplicationQuit()
     {
         if (NetworkClient.isConnected)
         {
-            manager_BSJ.StopClient();
+            StopClient();
         }
         if (NetworkServer.active)
         {
-            manager_BSJ.StopServer();
+            StopServer();
         }
     }
 }

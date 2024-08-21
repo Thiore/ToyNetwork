@@ -156,7 +156,9 @@ MonoBehaviour:
   syncInterval: 0
   LB: {fileID: 6703591084508991862, guid: 29664475c54680a449077da2960c20ca, type: 3}
   RT: {fileID: 4677849740204339680, guid: 51f459538f458e84d97ba5989409dc2e, type: 3}
+  playerType: 0
   Chip_Prefabs: {fileID: 8242623377463246510, guid: 823bf64b084598c498d82bad9ed4ff23, type: 3}
+  Chip_Array: []
   isthis: 0
 --- !u!114 &4040268029124843586
 MonoBehaviour:
@@ -165,7 +167,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4040268029124843613}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 84e4519850451b542be2f99a0a16f080, type: 3}
   m_Name: 
