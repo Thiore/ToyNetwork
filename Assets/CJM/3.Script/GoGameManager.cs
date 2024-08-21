@@ -7,10 +7,6 @@ public class GoGameManager : MonoBehaviour
 {
     public int myTurn = 1;
 
-    private float currentTime = 0f;
-    private float limitTime = 10f;
-
-
     [SerializeField] Gomoku_Logic logic;
     [SerializeField] Player player;
 

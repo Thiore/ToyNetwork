@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Gomoku_Logic : MonoBehaviour
 {
@@ -8,11 +9,12 @@ public class Gomoku_Logic : MonoBehaviour
     private List<Chip> Black_Chip = new List<Chip>();
     private List<Chip> White_Chip = new List<Chip>();
     [SerializeField] public GameObject result_Panel; //이건 조립 
+    [SerializeField] private Text winner;
 
     // 착수 이후 결과값 검출
     private void Check_Chip(Player player, Chip lastChip)
     {
-        List<Chip> playerChips = player.Myturn ? Black_Chip : White_Chip;
+        List<Chip> playerChips = (1 == player.connectcount % 2) ? Black_Chip : White_Chip;
 
         // 바둑알이 5개가 안되는 경우
         if (playerChips.Count < 5)
@@ -40,7 +42,6 @@ public class Gomoku_Logic : MonoBehaviour
         // 역방향 체크
         count += CountChipsInDirection(chips, lastChip, -dx, -dy);
 
-        Debug.Log(count);
         return count >= 5;
     }
 
@@ -64,9 +65,10 @@ public class Gomoku_Logic : MonoBehaviour
     // 게임 종료 (추가 구현 필요)
     private void EndGame(Player player, Chip[] chips)
     {
-        string winner = player.Myturn ? "흑색" : "백색";
+        string winner = (1 == player.connectcount % 2) ? "흑색" : "백색";
         Debug.Log($"{winner} 승리");
         result_Panel.SetActive(true);
+        this.winner.text = ($"{winner} 승리!");
         // 게임 종료 로직 구현
 
     }
@@ -77,11 +79,11 @@ public class Gomoku_Logic : MonoBehaviour
     // 착수 시, 호출해야 하는 메서드
     public void AddChip(Chip chip, Player player)
     {
-        if (player.Myturn)
+        if (1 == player.connectcount % 2)
         {
             Black_Chip.Add(chip);
         }
-        else if (!player.Myturn)
+        else
         {
             White_Chip.Add(chip);
         }

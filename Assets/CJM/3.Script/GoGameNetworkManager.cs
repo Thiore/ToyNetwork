@@ -17,6 +17,8 @@ public class GoGameNetworkManager : NetworkManager
         ConnectCount++;
         Debug.Log(ConnectCount);
         clientConnection[conn] = ConnectCount;
+
+       
     }
 
     public override void OnServerDisconnect(NetworkConnectionToClient conn)

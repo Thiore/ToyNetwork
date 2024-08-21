@@ -45,8 +45,6 @@ public class gotestServer : MonoBehaviour
             };
             NetworkServer.OnDisconnectedEvent += (NetworkConnectionToClient) => { Debug.Log($"Client DisConnect : {NetworkConnectionToClient.address}"); };
 
-
-
             BoardGO();
         }
     }
@@ -58,7 +56,8 @@ public class gotestServer : MonoBehaviour
         var board = Instantiate(boardfab).transform.GetComponent<Board>();
         var iden = board.GetComponent<NetworkIdentity>();
         NetworkServer.Spawn(board.gameObject, iden.connectionToClient);
-        board.InitBoard();    
+        board.InitBoard();
+
     }
 
     public void Start_Client()

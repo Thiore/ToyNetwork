@@ -10,8 +10,7 @@ public class Chip : NetworkBehaviour
     private bool isPut = false;
     public bool IsPut { get => isPut; set => isPut = value; }
     [SerializeField] private Gomoku_Logic logic;
-    [SerializeField] private Player player;
-    private GoGameManager gameManager;
+    [SerializeField] public Player player = null;
 
     //0 Èæ 1 ¹é 
     [SerializeField] private Material[] checkchip_material;
@@ -21,8 +20,10 @@ public class Chip : NetworkBehaviour
 
     public Material[] CheckChip_Mate { get => checkchip_material; }
 
-    private int row;
-    private int col;
+    [SyncVar]
+    [SerializeField] private  int row;
+    [SyncVar]
+    [SerializeField] private int col;
     public int Row { get => row; set => row = value; }
     public int Col { get => col; set => col = value; }
 
@@ -31,17 +32,28 @@ public class Chip : NetworkBehaviour
         meshrender = GetComponent<MeshRenderer>();
         meshrender.enabled = false;
         logic = GameObject.FindObjectOfType<Gomoku_Logic>();
-        gameManager = FindObjectOfType<GoGameManager>();
     }
 
 
     private void OnMouseOver()
     {
+        if(player == null)
+        {
+            Player[] obj = FindObjectsOfType<Player>();
+            
+            foreach(Player p in obj)
+            {
+                if(p.isLocalPlayer)
+                    player = p;
+            }
+        }
+            
+
         if (!isPut && logic.result_Panel.activeSelf.Equals(false))
         {
             MeshRenderer mate = transform.GetComponent<MeshRenderer>();
             mate.enabled = true;
-            mate.material = ((gameManager.myTurn % 2).Equals(1)) ? CheckChip_Mate[0] : CheckChip_Mate[1];
+            mate.material = ((player.connectcount % 2).Equals(1)) ? CheckChip_Mate[0] : CheckChip_Mate[1];
         }
     }
 
