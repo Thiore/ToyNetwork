@@ -38,6 +38,8 @@ public class User_info
     public string User_Name { get; private set; }
     public string User_Password { get; private set; }
     public string User_Img { get; private set; }
+    public int Ot_win { get; private set; }
+    public int Ot_lose { get; private set; }
     public int K_win { get; private set; }
     public int K_lose { get; private set; }
     public int O_win { get; private set; }
@@ -47,12 +49,14 @@ public class User_info
 
     // User_info 클래스의 생성자
     // 사용자의 ID, 이름, 비밀번호, 이미지, 승리 및 패배 기록을 초기화함
-    public User_info(string id, string name, string password, string img, int k_win, int k_lose, int o_win, int o_lose, int login)
+    public User_info(string id, string name, string password, string img, int ot_win, int ot_lose, int k_win, int k_lose, int o_win, int o_lose, int login)
     {
         User_ID = id;
         User_Name = name;
         User_Password = password;
         User_Img = img;
+        Ot_win = ot_win;
+        Ot_lose = ot_lose;
         K_win = k_win;
         K_lose = k_lose;
         O_win = o_win;
@@ -430,37 +434,29 @@ public class SQL_Manager : MonoBehaviour
         try
         {
             if (!connection_check(connection))
-        {
+            {
+                return false;
+            }
+            string SQL_Command = string.Empty;
+            // 새로운 방 정보를 RoomList 테이블에 삽입
+
+            SQL_Command = string.Format($@"SHOW TABLE STATUS LIKE 'roomlist';
+                          ALTER TABLE roomlist AUTO_INCREMENT = 1;
+                          INSERT INTO RoomList (RoomName, GameType, HostName, Password) 
+                          VALUES('{roomName}', '{gameType}', '{info.User_Name}', '{password}');");
+
+
+            MySqlCommand cmd = new MySqlCommand(SQL_Command, connection);
+            int count = cmd.ExecuteNonQuery();
+
+            if (count >= 1)
+            {
+                int RoomID = SelectRoomID(roomName);
+                roomDic.Add(RoomID, new Room_info(RoomID, roomName, gameType, 0, info.User_Name, password));
+                Debug.Log("Room created successfully");
+                return true;
+            }
             return false;
-        }
-        string SQL_Command = string.Empty;
-        // 새로운 방 정보를 RoomList 테이블에 삽입
-        if (password != null)
-        {
-            SQL_Command =
-            string.Format($@"SHOW TABLE STATUS LIKE 'roomlist';
-                                 ALTER TABLE roomlist AUTO_INCREMENT = 1;
-                                 INSERT INTO RoomList (RoomName, GameType, HostName, Password) 
-                                 VALUES('{roomName}', '{gameType}', '{info.User_Name}', '{password}');");
-        }
-        else
-        {
-            SQL_Command =
-            string.Format($@"SHOW TABLE STATUS LIKE 'roomlist';
-                                 ALTER TABLE roomlist AUTO_INCREMENT = 1;
-                                 INSERT INTO RoomList (RoomName, GameType, HostName) 
-                                 VALUES('{roomName}', '{gameType}', '{info.User_Name}');");
-        }
-
-        MySqlCommand cmd = new MySqlCommand(SQL_Command, connection);
-        int count = cmd.ExecuteNonQuery();
-
-        if (count >= 1)
-        {
-            Debug.Log("Room created successfully");
-            return true;
-        }
-        return false;
         }
         catch (Exception e)
         {
@@ -469,18 +465,13 @@ public class SQL_Manager : MonoBehaviour
         }
     }
 
-    public int SelectRoomID()
+    public int SelectRoomID(string roomName)
     {
         try
         {
-            if (!connection_check(connection))
-            {
-                return 0;
-            }
-
             // SQL 쿼리로 ID가 존재하는지 확인
             string SQL_Command =
-                string.Format($@"SELECT RoomID FROM roomlist WHERE HostName = '{info.User_Name}'");
+                string.Format($@"SELECT RoomID FROM roomlist WHERE RoomName = '{roomName}'");
             MySqlCommand cmd = new MySqlCommand(SQL_Command, connection);
             reader = cmd.ExecuteReader();
 
@@ -546,8 +537,6 @@ public class SQL_Manager : MonoBehaviour
                 return;
             }
 
-            roomDic.Clear(); // 기존 방 목록 초기화
-
             // RoomList 테이블에서 모든 방 정보 조회
             string SQL_Command = "SELECT * FROM RoomList;";
             MySqlCommand cmd = new MySqlCommand(SQL_Command, connection);
@@ -555,6 +544,7 @@ public class SQL_Manager : MonoBehaviour
 
             if (reader.HasRows)
             {
+                roomDic.Clear(); // 기존 방 목록 초기화
                 while (reader.Read())
                 {
                     int roomID = reader.GetInt32("RoomID");
@@ -593,8 +583,7 @@ public class SQL_Manager : MonoBehaviour
             }
 
             // 특정 방의 현재 플레이어 수 업데이트
-            string SQL_Command =
-                string.Format($@"UPDATE RoomList 
+            string SQL_Command = string.Format($@"UPDATE RoomList 
                                  SET Current_Players = {currentPlayers} 
                                  WHERE Room_ID = {roomID};");
             MySqlCommand cmd = new MySqlCommand(SQL_Command, connection);

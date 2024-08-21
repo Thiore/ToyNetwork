@@ -2,12 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Mirror;
-using UnityEngine.SceneManagement;
 
-
-
-public class CreateRoomBtn : NetworkBehaviour
+public class CreateRoomBtn : MonoBehaviour
 {
     [SerializeField] private Text GameType;
     [SerializeField] private InputField RoomName;
