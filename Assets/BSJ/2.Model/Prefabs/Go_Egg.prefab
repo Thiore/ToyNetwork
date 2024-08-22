@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 6493871588589372920}
   - component: {fileID: -6580448211966430631}
   - component: {fileID: 7772218691355912670}
+  - component: {fileID: 3451811876345176826}
   m_Layer: 0
   m_Name: Go_Egg
   m_TagString: Untagged
@@ -135,7 +136,7 @@ MonoBehaviour:
   forceMultiplier: 10
   circleSegments: 100
   maxRadius: 3
-  ismine: 0
+  type: 0
 --- !u!120 &6493871588589372920
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -286,3 +287,38 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
+--- !u!114 &3451811876345176826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8242623377463246510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b20dc110904e47f8a154cdcf6433eae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 7520620980199133764}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 0
+  coordinateSpace: 0
+  sendIntervalMultiplier: 1
+  timelineOffset: 0
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  bufferResetMultiplier: 3
+  changedDetection: 1
+  positionSensitivity: 0.01
+  rotationSensitivity: 0.01
+  scaleSensitivity: 0.01

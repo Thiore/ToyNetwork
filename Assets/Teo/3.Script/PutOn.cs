@@ -10,20 +10,24 @@ public class PutOn : NetworkBehaviour
     [SerializeField] private Transform LB;
     [SerializeField] private Transform RT;
     
-    private float setTime = 6f;
-    private float startTime;
+    public float setTime = 6f;
+    public float startTime;
     [SerializeField] private GameObject Chip_Prefabs;
    
-    private int SetCount = 5;
     [SyncVar]
-    private bool isMyTurn;
+    public bool isMyTurn;
+    [SyncVar]
+    public bool isStart = false;
+
     [SyncVar]
     public PlayerType playerType;
+
+    public bool isGameStart;
+
     private Queue<GameObject> Chip_Queue = new Queue<GameObject>();
    
     //public GameObject[] Chip_Array;
-    private int Chip_Num = 0;
-    public bool isGameStart { get; set; }
+    //private int Chip_Num = 0;
 
     //private Select_color select_Color;
     private Camera cam;
@@ -51,14 +55,6 @@ public class PutOn : NetworkBehaviour
         if (!isLocalPlayer) return;
 
         cam = GetComponent<Camera>();
-
-
-        for (int i = 0; i < SetCount; i++)
-        {
-            CmdChipSet();
-        }
-
-
     }
 
     private void Update()
@@ -71,65 +67,78 @@ public class PutOn : NetworkBehaviour
         if (!isLocalPlayer||isServer) return;
         //isthis = isLocalPlayer;
         //Debug.Log("Put on Update 들어옴");
-        if (startTime < setTime)
+        if(isStart)
         {
-            startTime += Time.deltaTime;
-            if (Chip_Queue.Count > 0)
+            if (startTime < setTime)
             {
-            
-                if (Input.GetMouseButtonDown(0))
+                startTime += Time.deltaTime;
+                if (Chip_Queue.Count < 5)
                 {
-                    Debug.Log("마우스 버튼 눌림");
-                    Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-                    if (Physics.Raycast(ray, out RaycastHit hit))
+
+                    if (Input.GetMouseButtonDown(0))
                     {
-                        if (hit.point.x > LB.position.x && hit.point.x < RT.position.x && hit.point.z > LB.position.z && hit.point.z < RT.position.z && !hit.collider.CompareTag("Chip"))
+                        Debug.Log("마우스 버튼 눌림");
+                        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+                        if (Physics.Raycast(ray, out RaycastHit hit))
                         {
-                            Debug.Log("생성요청하기");
-                            CmdChipPos(hit.point);
-                            transform.GetChild(Chip_Num).position = hit.point;
-                            transform.GetChild(Chip_Num).gameObject.SetActive(true);
-                            Chip_Num++;
-                            //            obj.SetActive(true);
-                            // 서버에서 바둑알 생성 요청
-                            //CmdPlaceChip(hit.point);
-                            //hit.transform.GetComponent<Kick_Chip>().ismine = true;
+                            if (hit.point.x > LB.position.x && hit.point.x < RT.position.x && hit.point.z > LB.position.z && hit.point.z < RT.position.z && !hit.collider.CompareTag("Chip"))
+                            {
+                                Debug.Log("생성요청하기");
+                                CmdPlayerType(hit.point, playerType, netId);
+                                //Chip_Num++;
+                                //            obj.SetActive(true);
+                                // 서버에서 바둑알 생성 요청
+                                //CmdPlaceChip(hit.point);
+                                //hit.transform.GetComponent<Kick_Chip>().ismine = true;
+                            }
                         }
                     }
                 }
             }
         }
+        
     }
+    
     [Command]
-    public void CmdChipSet()
+    private void CmdPlayerType(Vector3 pos, PlayerType type, uint playerid)
     {
-        
-            GameObject _Chip = Instantiate(NetworkManager.singleton.spawnPrefabs[0]);
-            NetworkServer.Spawn(_Chip, gameObject);
-            _Chip.TryGetComponent(out Kick_Chip chip);
-            chip.SetPutOn(this);
+        GameObject _Chip = Instantiate(NetworkManager.singleton.spawnPrefabs[0], pos, Quaternion.identity);
+
+        _Chip.TryGetComponent(out Kick_Chip chip);
+
+        NetworkServer.Spawn(_Chip);
+        chip.netIdentity.AssignClientAuthority(connectionToClient);
+        chip.TryGetComponent(out MeshRenderer chipRen);
+        if (type.Equals(PlayerType.Black))
+            chipRen.material.color = Color.black;
+        else
+            chipRen.material.color = Color.white;
+        if(netId.Equals(playerid))
             Chip_Queue.Enqueue(_Chip);
-            _Chip.SetActive(false);
-        
+
+        chip.RpcChipType(type, playerid);
+        RpcChipSet(playerid, chip.netId);
     }
     [ClientRpc]
-    
-    
-    [Command]
-    public void CmdChipPos(Vector3 pos)
+    private void RpcChipSet(uint playerid, uint chipid)
     {
-        if(Chip_Queue.Count>0)
+        if(netId.Equals(playerid))
         {
-            GameObject obj = Chip_Queue.Dequeue();
-            obj.transform.position = pos;
-            obj.SetActive(true);
+            Chip_Queue.Enqueue(NetworkClient.spawned[chipid].gameObject);
         }
-       
     }
 
-    public void ChangeType(PlayerType type)
+
+
+
+
+    public void HitChipStart(bool start, uint netid)
     {
-        playerType = type;
+        isStart = start;
+        if (this.netId.Equals(netid))
+            isMyTurn = true;
+        else
+            isMyTurn = false;
     }
 
     #region 주석시작
@@ -140,7 +149,7 @@ public class PutOn : NetworkBehaviour
     //    RpcPlaceChip(position);
     //    //if (netId.Equals(localID))
     //    //{
-            
+
     //        if (!Chip_Num.Equals(SetCount))
     //        {
     //            Debug.Log("들어왔니?");
@@ -159,7 +168,7 @@ public class PutOn : NetworkBehaviour
     //        }
     //    //}
     //    // 모든 클라이언트에서 바둑알 배치 동기화
-        
+
     //}
 
     //// 모든 클라이언트에서 바둑알 배치
@@ -190,13 +199,7 @@ public class PutOn : NetworkBehaviour
     ////{
     ////    CmdKickEgg(num, force, position, rotation);
     ////}
-    //[Command]
-    //public void CmdKickEgg(int num, Vector3 force/*, Vector3 position, Quaternion rotation*/)
-    //{
-    //    RpcKickEgg(num, force);
-    //    Chip_Array[num].GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
 
-    //}
     //[ClientRpc]
     //public void RpcKickEgg(int num, Vector3 force/*, Vector3 position, Quaternion rotation*/)
     //{
@@ -208,13 +211,13 @@ public class PutOn : NetworkBehaviour
     //     //Chip_Array[num].transform.position = position;
     //    //Chip_Array[num].transform.rotation = rotation;
     //    Debug.Log("RpcKickEgg() 호출됨");
-        
+
     //}
 
-    public void KickForce(Vector3 force,GameObject chip)
-    {
-        chip.GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
-    }
+    //public void KickForce(Vector3 force,GameObject chip)
+    //{
+    //    chip.GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
+    //}
     #endregion
     //[ClientRpc]
     //private void RPCEgg()
@@ -222,6 +225,7 @@ public class PutOn : NetworkBehaviour
     //    Debug.Log("RPCEgg() 호출됨");
 
     //}
+    
     public void Die(GameObject obj)
     {
         obj.SetActive(false);

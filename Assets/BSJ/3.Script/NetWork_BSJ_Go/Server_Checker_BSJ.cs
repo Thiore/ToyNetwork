@@ -13,6 +13,7 @@ public class Server_Checker_BSJ : NetworkManager
 {
     public Type type_BSJ;
     private int addPlayerCount;
+    private List<PutOn> players = new List<PutOn>();
 
     
     public List<GameObject> spawnedObj = new List<GameObject>();
@@ -37,12 +38,27 @@ public class Server_Checker_BSJ : NetworkManager
         addPlayerCount++;
         GameObject player = conn.identity.gameObject;
         PutOn ChipPlayer = player.GetComponent<PutOn>();
+        players.Add(ChipPlayer);
         int chipType = addPlayerCount % 2;
             ChipPlayer.playerType = (PlayerType)chipType;
 
+        if(players.Count>1)
+        {
+            for (int i = 0; i < players.Count; i++)
+            {
+                players[i].HitChipStart(true, players[0].netId);
 
+            }
+        }
     }
-    
+    public override void OnServerDisconnect(NetworkConnectionToClient conn)
+    {
+        players.Remove(conn.identity.GetComponent<PutOn>());
+        base.OnServerDisconnect(conn);
+        
+    }
+
+   
 
     public void Start_Server_BSJ()
     {

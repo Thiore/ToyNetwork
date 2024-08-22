@@ -4,6 +4,7 @@ using Mirror;
 public class Kick_Chip : NetworkBehaviour
 {
     private Rigidbody rb;
+    private NetworkRigidbodyUnreliable nrb;
     private Vector3 startPoint;
     private Vector3 endPoint;
     private LineRenderer lineRenderer;
@@ -15,12 +16,13 @@ public class Kick_Chip : NetworkBehaviour
     private float currentRadius = 0f; // 원의 현재 반지름
     private Camera cam;
     //[SerializeField] private GameObject lb;
-
-    [SyncVar]
-    [SerializeField]private PutOn player;
+    
+    private PutOn player = null;
+    public PlayerType type;
     
     private RPC_GO_BSJ rpc_go_bsj;
     //public bool ismine = false;
+    
     private void OnEnable()
     {
         isDie = false;
@@ -30,8 +32,7 @@ public class Kick_Chip : NetworkBehaviour
     {
        
         rb = GetComponent<Rigidbody>();
-        
-
+        nrb = GetComponent<NetworkRigidbodyUnreliable>();
         // LineRenderer 설정
         lineRenderer = gameObject.GetComponent<LineRenderer>();
         lineRenderer.startWidth = 0.05f;
@@ -44,16 +45,7 @@ public class Kick_Chip : NetworkBehaviour
         lineRenderer.enabled = false; // 드래그할 때만 보이게 설정
 
         //rpc_go_bsj = GetComponent<RPC_GO_BSJ>();
-        player = connectionToClient.identity.GetComponent<PutOn>();
 
-        cam = player.GetComponent<Camera>();
-        TryGetComponent(out MeshRenderer chipRen);
-        if (player.playerType.Equals(PlayerType.Black))
-            chipRen.material.color = Color.black;
-        else
-            chipRen.material.color = Color.white;
-        
-        
         //gameObject.layer = LayerMask.NameToLayer((player.playerType).ToString());
         // 클라이언트 권한 부여를 서버에서 처리할 수 있도록 함
         //if (!isServer)
@@ -72,7 +64,15 @@ public class Kick_Chip : NetworkBehaviour
  
     void Update()
     {
-        if (!isOwned) return;
+        if (isServer) return;
+        
+        if (!(player.isLocalPlayer)) return;
+       
+            
+
+        if (player.setTime > player.startTime) return;
+
+        if (!(player.isMyTurn)) return;
         //GameObject ismine_ob;
         if (Input.GetMouseButtonDown(0))
         {
@@ -80,8 +80,6 @@ public class Kick_Chip : NetworkBehaviour
             //Debug.Log("눌림");
             rb.angularVelocity = Vector3.zero;
             transform.rotation = Quaternion.identity;
-            Debug.Log(cam.transform.position);
-            Debug.Log(cam.transform.rotation);
 
             Ray ray =cam.ScreenPointToRay(Input.mousePosition);
             //GameObject bb = Instantiate(lb);
@@ -136,7 +134,8 @@ public class Kick_Chip : NetworkBehaviour
             Vector3 forceDirection = endPoint - startPoint;
             //rb.AddForce(-forceDirection.normalized * forceMultiplier * currentRadius, ForceMode.Impulse);
             Vector3 force = -forceDirection.normalized * forceMultiplier * currentRadius;
-            //putOn_Player.KickForce(force, gameObject);
+            //CmdKickEgg(force);
+            rb.AddForce(force, ForceMode.Impulse);
             // 위치와 회전을 서버에 동기화 요청
             //if (isLocalPlayer)
             //if (isLocalPlayer)//
@@ -165,11 +164,38 @@ public class Kick_Chip : NetworkBehaviour
             //}
         }
     }
-    public void SetPutOn(PutOn put)
+
+    [ClientRpc]
+    public void RpcChipType(PlayerType type, uint playerid)
+    {
+        player = NetworkClient.spawned[playerid].gameObject.GetComponent<PutOn>();
+        cam = player.GetComponent<Camera>();
+        TryGetComponent(out MeshRenderer chipRen);
+        if (type.Equals(PlayerType.Black))
+            chipRen.material.color = Color.black;
+        else
+            chipRen.material.color = Color.white;
+    }
+
+    public void Setplayer(PutOn put)
     {
         player = put;
-        
     }
+
+    [Command]
+    public void CmdKickEgg(Vector3 force)
+    {
+        
+        rb.AddForce(force, ForceMode.Impulse);
+        RpcApplyForce(force);
+    }
+
+    [ClientRpc]
+    void RpcApplyForce(Vector3 force)
+    {
+        rb.AddForce(force, ForceMode.Impulse);
+    }
+
     // 원 그리기
     void DrawCircle(float radius, Vector3 dir)
     {
@@ -199,6 +225,18 @@ public class Kick_Chip : NetworkBehaviour
             isDie = true;
             Invoke("InvokeDie", 1f);
         }
+
+        if (!isServer)
+            return;
+
+        Rigidbody hitRb = collision.rigidbody;
+        if (hitRb != null)
+        {
+            // 서버에서 충돌을 처리하고, 상대 칩에 힘을 가한다.
+            Vector3 calculatedForce = collision.impulse;
+            hitRb.AddForce(calculatedForce, ForceMode.Impulse);
+        }
+
     }
     private void InvokeDie()
     {
