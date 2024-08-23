@@ -116,7 +116,6 @@ public class PutOn : NetworkBehaviour
         if(netId.Equals(playerid))
             Chip_Queue.Enqueue(_Chip);
 
-        chip.RpcChipType(type, playerid);
         RpcChipSet(playerid, chip.netId);
     }
     [ClientRpc]
@@ -126,6 +125,12 @@ public class PutOn : NetworkBehaviour
         {
             Chip_Queue.Enqueue(NetworkClient.spawned[chipid].gameObject);
         }
+        PutOn put = NetworkClient.spawned[playerid].GetComponent<PutOn>();
+        MeshRenderer chipRen = NetworkClient.spawned[chipid].GetComponent<MeshRenderer>();
+        if (put.playerType.Equals(PlayerType.Black))
+            chipRen.material.color = Color.black;
+        else
+            chipRen.material.color = Color.white;
     }
 
 
@@ -136,9 +141,15 @@ public class PutOn : NetworkBehaviour
     {
         isStart = start;
         if (this.netId.Equals(netid))
+        {
+            playerType = PlayerType.Black;
             isMyTurn = true;
+        }
         else
+        {
+            playerType = PlayerType.White;
             isMyTurn = false;
+        }
     }
 
     #region 주석시작

@@ -4,7 +4,7 @@ using Mirror;
 public class Kick_Chip : NetworkBehaviour
 {
     private Rigidbody rb;
-    private NetworkRigidbodyUnreliable nrb;
+    
     private Vector3 startPoint;
     private Vector3 endPoint;
     private LineRenderer lineRenderer;
@@ -32,7 +32,7 @@ public class Kick_Chip : NetworkBehaviour
     {
        
         rb = GetComponent<Rigidbody>();
-        nrb = GetComponent<NetworkRigidbodyUnreliable>();
+        
         // LineRenderer 설정
         lineRenderer = gameObject.GetComponent<LineRenderer>();
         lineRenderer.startWidth = 0.05f;
@@ -43,6 +43,16 @@ public class Kick_Chip : NetworkBehaviour
         lineRenderer.positionCount = circleSegments + 2; // 원을 그리기 위해 필요한 점의 수
         lineRenderer.useWorldSpace = false; // 로컬 좌표를 사용
         lineRenderer.enabled = false; // 드래그할 때만 보이게 설정
+
+        if (!isClient) return;
+
+        player = NetworkClient.localPlayer.GetComponent<PutOn>();
+        cam = player.GetComponent<Camera>();
+        //TryGetComponent(out MeshRenderer chipRen);
+        //if (type.Equals(PlayerType.Black))
+        //    chipRen.material.color = Color.black;
+        //else
+        //    chipRen.material.color = Color.white;
 
         //rpc_go_bsj = GetComponent<RPC_GO_BSJ>();
 
@@ -64,12 +74,8 @@ public class Kick_Chip : NetworkBehaviour
  
     void Update()
     {
-        if (isServer) return;
+        if (!isClient) return;
         
-        if (!(player.isLocalPlayer)) return;
-       
-            
-
         if (player.setTime > player.startTime) return;
 
         if (!(player.isMyTurn)) return;
@@ -168,13 +174,14 @@ public class Kick_Chip : NetworkBehaviour
     [ClientRpc]
     public void RpcChipType(PlayerType type, uint playerid)
     {
-        player = NetworkClient.spawned[playerid].gameObject.GetComponent<PutOn>();
-        cam = player.GetComponent<Camera>();
-        TryGetComponent(out MeshRenderer chipRen);
-        if (type.Equals(PlayerType.Black))
-            chipRen.material.color = Color.black;
-        else
-            chipRen.material.color = Color.white;
+        //player = NetworkClient.spawned[playerid].gameObject.GetComponent<PutOn>();
+        //cam = player.GetComponent<Camera>();
+        //TryGetComponent(out MeshRenderer chipRen);
+        //if (type.Equals(PlayerType.Black))
+        //    chipRen.material.color = Color.black;
+        //else
+        //    chipRen.material.color = Color.white;
+        
     }
 
     public void Setplayer(PutOn put)
@@ -186,7 +193,7 @@ public class Kick_Chip : NetworkBehaviour
     public void CmdKickEgg(Vector3 force)
     {
         
-        rb.AddForce(force, ForceMode.Impulse);
+        //rb.AddForce(force, ForceMode.Impulse);
         RpcApplyForce(force);
     }
 
@@ -226,18 +233,42 @@ public class Kick_Chip : NetworkBehaviour
             Invoke("InvokeDie", 1f);
         }
 
-        if (!isServer)
-            return;
+        if (!isServer) return;
 
-        Rigidbody hitRb = collision.rigidbody;
-        if (hitRb != null)
+        if (!collision.gameObject.CompareTag("Chip")) return;
+
+
+        Vector3 collisionForce = collision.relativeVelocity * rb.mass; // 충돌로 인한 힘 계산
+
+        PhysicMaterial material = collision.collider.sharedMaterial;
+        if (material != null)
         {
-            // 서버에서 충돌을 처리하고, 상대 칩에 힘을 가한다.
-            Vector3 calculatedForce = collision.impulse;
-            hitRb.AddForce(calculatedForce, ForceMode.Impulse);
+            float friction = Mathf.Min(material.dynamicFriction, material.staticFriction);
+            float bounciness = material.bounciness;
+
+            // 예: 마찰력에 따른 힘 감소, 반발력에 따른 추가 힘 적용
+            collisionForce *= (1 - friction);
+            collisionForce += collision.relativeVelocity * bounciness * rb.mass;
         }
 
+        RpcApplyCollisionForce(collisionForce);
     }
+
+    [Command]
+    private void CmdApplyCollisionForce(Vector3 collisionForce)
+    {
+        //RpcApplyCollisionForce(collisionForce);
+        if (isOwned)
+            rb.AddForce(-collisionForce, ForceMode.Impulse);
+    }
+
+    [ClientRpc]
+    private void RpcApplyCollisionForce(Vector3 collisionForce)
+    {
+        if(isOwned)
+            rb.AddForce(collisionForce, ForceMode.Impulse);
+    }
+
     private void InvokeDie()
     {
 
