@@ -24,6 +24,7 @@ public class Server_Checker_BSJ : NetworkManager
         if (type_BSJ.Equals(Type.Server_BSJ))
         {
             Start_Server_BSJ();
+            NetworkServer.maxConnections = 2;
         }
         else
         {
@@ -42,13 +43,22 @@ public class Server_Checker_BSJ : NetworkManager
         int chipType = addPlayerCount % 2;
             ChipPlayer.playerType = (PlayerType)chipType;
 
-        if(players.Count>1)
+        GameObject coin = Instantiate(spawnPrefabs[1]);
+        NetworkServer.Spawn(coin);
+        coin.GetComponent<Coin>().players = players;
+
+        if (NetworkServer.connections.Count.Equals(2))
         {
+            GameObject manager = Instantiate(spawnPrefabs[2]);
+            NetworkServer.Spawn(manager);
+
             for (int i = 0; i < players.Count; i++)
             {
-                players[i].HitChipStart(true, players[0].netId);
+                players[i].HitChipStart(players[0].netId);
 
             }
+            
+            //Coin.coin.CmdBounceCoin();
         }
     }
     public override void OnServerDisconnect(NetworkConnectionToClient conn)
@@ -57,7 +67,6 @@ public class Server_Checker_BSJ : NetworkManager
         base.OnServerDisconnect(conn);
         
     }
-
    
 
     public void Start_Server_BSJ()

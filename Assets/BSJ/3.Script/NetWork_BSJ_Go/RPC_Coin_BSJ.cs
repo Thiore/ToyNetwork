@@ -30,8 +30,7 @@ public class RPC_Coin_BSJ : NetworkBehaviour
     [Command]
     private void CmdSpawnCoin()
     {
-        GameObject coin = Instantiate(coinPrefab);
-        NetworkServer.Spawn(coin, connectionToClient);  // 생성한 클라이언트에게 권한 부여
+          // 생성한 클라이언트에게 권한 부여
     }
 
     

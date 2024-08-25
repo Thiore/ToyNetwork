@@ -5,44 +5,48 @@ using Mirror;
 
 public class Coin : NetworkBehaviour
 {
+    public static Coin coin;
     private Rigidbody rb;
     [SerializeField] private float Force;
-    [SerializeField] private GameObject Player_1P;
+
+    public List<PutOn> players;
     
     private Vector3 coinUp;
     private bool isThrow;
-    private PutOn puton;
+    private bool isStart = false;
     
-    private void Awake()
+    private void Start()
     {
+        
+        if(coin != this&&coin != null)
+        {
+            Destroy(coin.gameObject);   
+        }
+        coin = this;
         TryGetComponent(out rb);
         isThrow = false;
-        puton = Player_1P.GetComponent<PutOn>();
-        
 
+        if(players.Count.Equals(2))
+        {
+            CmdBounceCoin();
+        }
     }
-   
+
     private void Update()
     {
-        if (isLocalPlayer) return; //로컬플레이어만
+        //Debug.Log(transform.up);
+        //rb.AddForce(Vector3.up * Force, ForceMode.Impulse);
+        //float rand = Random.Range(0, 1f);
+        //rb.angularDrag = rand;
+        //rb.angularVelocity = Vector3.left * 50f;
 
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            Debug.Log(transform.up);
-            //rb.AddForce(Vector3.up * Force, ForceMode.Impulse);
-            //float rand = Random.Range(0, 1f);
-            //rb.angularDrag = rand;
-            //rb.angularVelocity = Vector3.left * 50f;
+        if (!isServer) return;
 
-            Debug.Log(transform.up);
-            CmdBounceCoin();
+        //CmdBounceCoin();
 
+        if (isThrow&&!isStart) return;
 
-        }
-        
-        if (isThrow)
-            return;
-        if (coinUp != Vector3.zero && !isThrow)
+        if (coinUp != Vector3.zero)
         {
             float dotProduct = Vector3.Dot(transform.up, Vector3.up);
 
@@ -66,30 +70,29 @@ public class Coin : NetworkBehaviour
                 Debug.Log("오브젝트가 수평입니다.");
             }
         }
-        
-    
-    }
-    [Command]  // 클라이언트에서 서버로 명령을 보내는 메서드
-    private void CmdBounceCoin()
-    {
-        Debug.Log("CmdBounceCoin() 호출됨");
-        RpcCoin();  // 모든 클라이언트에서 코인에 힘을 가하는 RPC 호출
-    }
 
-    [ClientRpc]
-    private void RpcCoin()
+
+    }
+    //[Command]  // 클라이언트에서 서버로 명령을 보내는 메서드
+    public void CmdBounceCoin()
     {
-        Debug.Log("RpcCoin() 호출됨");
-        rb.AddForce(Vector3.up * Force, ForceMode.Impulse);
+        if (!isServer) return;
+        Debug.Log("나불림?");
         float rand = Random.Range(0, 1f);
         rb.angularDrag = rand;
+        rb.AddForce(Vector3.up * Force, ForceMode.Impulse);
+
         rb.angularVelocity = Vector3.left * 50f;
+        
+        Debug.Log("나불림?");
     }
+
 
     private void OnCollisionExit(Collision collision)
     {
         coinUp = Vector3.zero;
         isThrow = true;
+        isStart = true;
     }
     private void OnCollisionStay(Collision collision)
     {
@@ -120,23 +123,34 @@ public class Coin : NetworkBehaviour
 
     private void SetPlayerType(string type)
     {
+        
         if (type == "Black")
         {
-            puton.isGameStart = true;
-            Invoke("Coin_False", 3f);
+            
+            players[0].isMyTurn = true;
+            players[1].isMyTurn = false;
+            Invoke("Coin_False", 2f);
 
 
         }
         else if (type == "White")
         {
-            puton.isGameStart = true;
-            Invoke("Coin_False", 3f);
+            players[0].isMyTurn = false;
+            players[1].isMyTurn = true;
+            Invoke("Coin_False", 2f);
         }
     }
 
     private void Coin_False()
     {
-        gameObject.SetActive(false);
+        GameManager.instance.isSetStart = true;
+        DestroyCoin();
+        Destroy(gameObject);
+    }
+    [ClientRpc]
+    private void DestroyCoin()
+    {
+        Destroy(gameObject);
     }
 
 }

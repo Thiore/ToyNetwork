@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Mirror;
 
 public enum PlayerType { Black, White }
@@ -17,14 +18,12 @@ public class PutOn : NetworkBehaviour
     [SyncVar]
     public bool isMyTurn;
     [SyncVar]
-    public bool isStart = false;
-
-    [SyncVar]
     public PlayerType playerType;
 
-    public bool isGameStart;
+    private Text Log1;
 
-    private Queue<GameObject> Chip_Queue = new Queue<GameObject>();
+
+    private List<GameObject> Chip_List = new List<GameObject>();
    
     //public GameObject[] Chip_Array;
     //private int Chip_Num = 0;
@@ -52,29 +51,28 @@ public class PutOn : NetworkBehaviour
         //    //Chip_Queue.Enqueue(obj);
         //}
         startTime = 0f;
-        if (!isLocalPlayer) return;
+        
 
+        Log1 = transform.GetChild(0).GetChild(0).GetComponent<Text>();
+        
+        Log1.text = string.Empty;
+        if (!isLocalPlayer) return;
         cam = GetComponent<Camera>();
     }
 
     private void Update()
     {
-        //if (isGameStart || isLocalPlayer) // 권한이 있는 로컬 플레이어만 수행
-        //{
-        //    //Debug.Log("마우스 권한 들어옴");
-        //    return;
-        //}
-        if (!isLocalPlayer||isServer) return;
-        //isthis = isLocalPlayer;
-        //Debug.Log("Put on Update 들어옴");
-        if(isStart)
+        if (!isLocalPlayer) return;
+        if (GameManager.instance == null) return;
+        if (GameManager.instance.isSetStart)
         {
             if (startTime < setTime)
             {
                 startTime += Time.deltaTime;
-                if (Chip_Queue.Count < 5)
+                
+                if (Chip_List.Count < 5)
                 {
-
+                    Log1.text = $"당신은 {playerType.ToString()}색입니다.\n원하는 위치에 알을 놓아주세요!\n남은 알 수 : {5-Chip_List.Count} / 남은 시간 : {Mathf.CeilToInt(setTime-startTime)}";
                     if (Input.GetMouseButtonDown(0))
                     {
                         Debug.Log("마우스 버튼 눌림");
@@ -94,7 +92,30 @@ public class PutOn : NetworkBehaviour
                         }
                     }
                 }
+                else
+                {
+                    Log1.text = "더 이상 알을 놓을 수 없습니다.";
+                }
             }
+            else
+            {
+                GameManager.instance.isSetStart = false;
+                GameManager.instance.isGameStart = true;
+            }
+        }
+        if(GameManager.instance.isGameStart)
+        {
+            
+            if(GameManager.instance.isTurn.Equals(isMyTurn))
+            {
+                Log1.text = "내 차례";
+            }
+            else
+            {
+                Log1.text = "상대 차례";
+
+            }
+            Log1.text += $"\nMyColor : {playerType.ToString()}";
         }
         
     }
@@ -107,14 +128,12 @@ public class PutOn : NetworkBehaviour
         _Chip.TryGetComponent(out Kick_Chip chip);
 
         NetworkServer.Spawn(_Chip);
-        chip.netIdentity.AssignClientAuthority(connectionToClient);
         chip.TryGetComponent(out MeshRenderer chipRen);
         if (type.Equals(PlayerType.Black))
             chipRen.material.color = Color.black;
         else
             chipRen.material.color = Color.white;
-        if(netId.Equals(playerid))
-            Chip_Queue.Enqueue(_Chip);
+        
 
         RpcChipSet(playerid, chip.netId);
     }
@@ -123,32 +142,45 @@ public class PutOn : NetworkBehaviour
     {
         if(netId.Equals(playerid))
         {
-            Chip_Queue.Enqueue(NetworkClient.spawned[chipid].gameObject);
+            Chip_List.Add(NetworkClient.spawned[chipid].gameObject);
+            GameManager.instance.SetCount(playerType, Chip_List.Count);
         }
         PutOn put = NetworkClient.spawned[playerid].GetComponent<PutOn>();
+
+        Kick_Chip chip = NetworkClient.spawned[chipid].GetComponent<Kick_Chip>();
         MeshRenderer chipRen = NetworkClient.spawned[chipid].GetComponent<MeshRenderer>();
         if (put.playerType.Equals(PlayerType.Black))
+        {
             chipRen.material.color = Color.black;
+        }
         else
+        {
             chipRen.material.color = Color.white;
+        }
+        chip.player = put;
+        chip.type = put.playerType;
+
     }
 
-
-
-
-
-    public void HitChipStart(bool start, uint netid)
+    [Command]
+    public void CmdKickEgg(Vector3 force, uint netid)
     {
-        isStart = start;
-        if (this.netId.Equals(netid))
+        NetworkServer.spawned[netid].GetComponent<Kick_Chip>().rb.AddForce(force, ForceMode.Impulse);
+        GameManager.instance.CmdChangeTurn();
+    }
+    
+
+
+
+    public void HitChipStart(uint netid)
+    {
+        if (netId.Equals(netid))
         {
             playerType = PlayerType.Black;
-            isMyTurn = true;
         }
         else
         {
             playerType = PlayerType.White;
-            isMyTurn = false;
         }
     }
 
@@ -230,21 +262,15 @@ public class PutOn : NetworkBehaviour
     //    chip.GetComponent<Rigidbody>().AddForce(force, ForceMode.Impulse);
     //}
     #endregion
-    //[ClientRpc]
-    //private void RPCEgg()
-    //{
-    //    Debug.Log("RPCEgg() 호출됨");
-
-    //}
+  
     
     public void Die(GameObject obj)
     {
-        obj.SetActive(false);
-        Chip_Queue.Enqueue(obj);
-        //Debug.Log(Chip_Queue.Count);
-        if (Chip_Queue.Count.Equals(0))
-        {
-            Debug.Log("Lose");
-        }
+
+        Chip_List.Remove(obj);
+        GameManager.instance.SetCount(playerType, Chip_List.Count);
+
+
     }
+
 }

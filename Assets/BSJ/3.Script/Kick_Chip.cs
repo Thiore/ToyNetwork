@@ -3,8 +3,8 @@ using Mirror;
 
 public class Kick_Chip : NetworkBehaviour
 {
-    private Rigidbody rb;
-    
+    public Rigidbody rb;
+
     private Vector3 startPoint;
     private Vector3 endPoint;
     private LineRenderer lineRenderer;
@@ -16,23 +16,23 @@ public class Kick_Chip : NetworkBehaviour
     private float currentRadius = 0f; // 원의 현재 반지름
     private Camera cam;
     //[SerializeField] private GameObject lb;
-    
-    private PutOn player = null;
+
+    public PutOn player = null;
     public PlayerType type;
-    
+
     private RPC_GO_BSJ rpc_go_bsj;
     //public bool ismine = false;
-    
+
     private void OnEnable()
     {
         isDie = false;
     }
-    
+
     void Start()
     {
-       
+
         rb = GetComponent<Rigidbody>();
-        
+
         // LineRenderer 설정
         lineRenderer = gameObject.GetComponent<LineRenderer>();
         lineRenderer.startWidth = 0.05f;
@@ -46,7 +46,7 @@ public class Kick_Chip : NetworkBehaviour
 
         if (!isClient) return;
 
-        player = NetworkClient.localPlayer.GetComponent<PutOn>();
+
         cam = player.GetComponent<Camera>();
         //TryGetComponent(out MeshRenderer chipRen);
         //if (type.Equals(PlayerType.Black))
@@ -71,26 +71,27 @@ public class Kick_Chip : NetworkBehaviour
         //    }
         //}
     }
- 
+
     void Update()
     {
-        if (!isClient) return;
-        
-        if (player.setTime > player.startTime) return;
+        if (player == null) return;
+        if (!(player.isLocalPlayer)) return;
+        if (!GameManager.instance.isGameStart) return;
+        if (!(player.isMyTurn).Equals(GameManager.instance.isTurn)) return;
 
-        if (!(player.isMyTurn)) return;
         //GameObject ismine_ob;
         if (Input.GetMouseButtonDown(0))
         {
-            
+
             //Debug.Log("눌림");
             rb.angularVelocity = Vector3.zero;
-            transform.rotation = Quaternion.identity;
+            
+            transform.eulerAngles = Vector3.zero;
 
-            Ray ray =cam.ScreenPointToRay(Input.mousePosition);
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             //GameObject bb = Instantiate(lb);
             Physics.Raycast(ray, out RaycastHit hitt);
-           // bb.transform.position = hitt.point;
+            // bb.transform.position = hitt.point;
             if (Physics.Raycast(ray, out RaycastHit hit) && hit.collider.gameObject == gameObject)
             {
                 Debug.Log("이거 들어오나");
@@ -123,7 +124,7 @@ public class Kick_Chip : NetworkBehaviour
                 Vector3 direction = endPoint - startPoint;
                 //lineRenderer.SetPosition(0, new Vector3(transform.position.x, 0.2f, transform.position.z) + direction.normalized * currentRadius);
 
-                DrawCircle(currentRadius, direction);
+                DrawCircle(currentRadius, direction.normalized);
                 //lineRenderer.SetPosition(circleSegments+1, new Vector3(transform.position.x, 0.2f, transform.position.z) - direction.normalized * currentRadius);
                 //Debug.Log("Line시작 : " + transform.position);
             }
@@ -138,69 +139,12 @@ public class Kick_Chip : NetworkBehaviour
 
             // 마우스를 당긴 반대 방향으로 힘 적용
             Vector3 forceDirection = endPoint - startPoint;
-            //rb.AddForce(-forceDirection.normalized * forceMultiplier * currentRadius, ForceMode.Impulse);
+            
             Vector3 force = -forceDirection.normalized * forceMultiplier * currentRadius;
-            //CmdKickEgg(force);
-            rb.AddForce(force, ForceMode.Impulse);
-            // 위치와 회전을 서버에 동기화 요청
-            //if (isLocalPlayer)
-            //if (isLocalPlayer)//
-            //{
-            //int num;
-            //for(int i = 0; i < putOn_Player.Chip_Array.Length;i++)
-            //{
-            //    if (putOn_Player.Chip_Array[i] != gameObject)
-            //        continue;
-            //    else
-            //    {
-            //        num = i;
-            //        //putOn_Player.CmdKickEgg(num, force);
-            //        //putOn_Player.Send_RpcKickEgg(num, force, transform.position, transform.rotation);
-            //        break;
-            //    }
-            //}
-            //if (isLocalPlayer)
-
-
-            //}
-            //else
-            //{
-            //    Debug.Log("CmdKickEgg의 권한 없음");
-            //    //CmdKickEgg();
-            //}
+    
+            player.CmdKickEgg(force, netId);
+            
         }
-    }
-
-    [ClientRpc]
-    public void RpcChipType(PlayerType type, uint playerid)
-    {
-        //player = NetworkClient.spawned[playerid].gameObject.GetComponent<PutOn>();
-        //cam = player.GetComponent<Camera>();
-        //TryGetComponent(out MeshRenderer chipRen);
-        //if (type.Equals(PlayerType.Black))
-        //    chipRen.material.color = Color.black;
-        //else
-        //    chipRen.material.color = Color.white;
-        
-    }
-
-    public void Setplayer(PutOn put)
-    {
-        player = put;
-    }
-
-    [Command]
-    public void CmdKickEgg(Vector3 force)
-    {
-        
-        //rb.AddForce(force, ForceMode.Impulse);
-        RpcApplyForce(force);
-    }
-
-    [ClientRpc]
-    void RpcApplyForce(Vector3 force)
-    {
-        rb.AddForce(force, ForceMode.Impulse);
     }
 
     // 원 그리기
@@ -208,10 +152,11 @@ public class Kick_Chip : NetworkBehaviour
     {
         //수정
         float angle;
+        Vector3 CompareVec3 = new Vector3(1f, 0.2f, 0f);
         if (dir.z > 0)
-            angle = -Vector3.Angle(-transform.right, dir);
+            angle = Vector3.Angle(CompareVec3, dir);
         else
-            angle = Vector3.Angle(-transform.right, dir);
+            angle = -Vector3.Angle(CompareVec3, dir);
         //Debug.Log(angle);
         float angleStep = 360f / circleSegments;
 
@@ -220,61 +165,28 @@ public class Kick_Chip : NetworkBehaviour
             float x = Mathf.Cos(Mathf.Deg2Rad * angle) * radius;
             float z = Mathf.Sin(Mathf.Deg2Rad * angle) * radius;
 
-            lineRenderer.SetPosition(i, new Vector3(x, 0.2f, z)); // XZ 평면에서 원을 그림
+            lineRenderer.SetPosition(i, new Vector3(-x, 0.2f, -z)); // XZ 평면에서 원을 그림
             angle += angleStep;
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Floor") && !isDie)
+        if (collision.gameObject.CompareTag("Floor"))
         {
-            isDie = true;
-            Invoke("InvokeDie", 1f);
+            if (isClient)
+            {
+                player.Die(gameObject);
+            }
+               
+            Destroy(gameObject, 1f);
         }
 
-        if (!isServer) return;
 
-        if (!collision.gameObject.CompareTag("Chip")) return;
-
-
-        Vector3 collisionForce = collision.relativeVelocity * rb.mass; // 충돌로 인한 힘 계산
-
-        PhysicMaterial material = collision.collider.sharedMaterial;
-        if (material != null)
-        {
-            float friction = Mathf.Min(material.dynamicFriction, material.staticFriction);
-            float bounciness = material.bounciness;
-
-            // 예: 마찰력에 따른 힘 감소, 반발력에 따른 추가 힘 적용
-            collisionForce *= (1 - friction);
-            collisionForce += collision.relativeVelocity * bounciness * rb.mass;
-        }
-
-        RpcApplyCollisionForce(collisionForce);
     }
 
-    [Command]
-    private void CmdApplyCollisionForce(Vector3 collisionForce)
-    {
-        //RpcApplyCollisionForce(collisionForce);
-        if (isOwned)
-            rb.AddForce(-collisionForce, ForceMode.Impulse);
-    }
-
-    [ClientRpc]
-    private void RpcApplyCollisionForce(Vector3 collisionForce)
-    {
-        if(isOwned)
-            rb.AddForce(collisionForce, ForceMode.Impulse);
-    }
-
-    private void InvokeDie()
-    {
-
-        player.Die(gameObject);
-    }
+}
 
    
 
-}
+
