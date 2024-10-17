@@ -49,14 +49,14 @@ public class User_info
 
     // User_info 클래스의 생성자
     // 사용자의 ID, 이름, 비밀번호, 이미지, 승리 및 패배 기록을 초기화함
-    public User_info(string id, string name, string password, string img, int ot_win, int ot_lose, int k_win, int k_lose, int o_win, int o_lose, int login)
+    public User_info(string id, string name, string password, string img, /*int ot_win, int ot_lose, */int k_win, int k_lose, int o_win, int o_lose, int login)
     {
         User_ID = id;
         User_Name = name;
         User_Password = password;
         User_Img = img;
-        Ot_win = ot_win;
-        Ot_lose = ot_lose;
+        //Ot_win = ot_win;
+        //Ot_lose = ot_lose;
         K_win = k_win;
         K_lose = k_lose;
         O_win = o_win;
